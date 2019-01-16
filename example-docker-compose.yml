@@ -14,7 +14,7 @@ services:
             PASSWORDCOCKPIT_BACKEND_DATABASE_DATABASE: passwordcockpit
             PASSWORDCOCKPIT_BACKEND_BLOCK_CIPHER_KEY: ciphersecretkey
             PASSWORDCOCKPIT_BACKEND_AUTHENTICATION_SECRET_KEY: authenticationsecretkey
-            PASSWORDCOCKPIT_BACKEND_SWAGGER_API_HOST: http://127.0.0.1:8181
+            PASSWORDCOCKPIT_BACKEND_SWAGGER_API_HOST: 127.0.0.1:8181
         depends_on:
             - passwordcockpit_database
         networks:
