@@ -1,0 +1,32 @@
+version: "3.5"
+services:
+    passwordcockpit:
+        image: passwordcockpit/passwordcockpit:1.0.0
+        container_name: passwordcockpit
+        ports:
+            - "8080:80"
+        volumes:
+            - ./volumes/data:/var/www/html/data
+        environment:
+            PASSWORDCOCKPIT_DATABASE_USERNAME: passwordcockpit_db_usr
+            PASSWORDCOCKPIT_DATABASE_PASSWORD: password
+            PASSWORDCOCKPIT_DATABASE_HOSTNAME: mysql
+            PASSWORDCOCKPIT_DATABASE_DATABASE: passwordcockpit
+            PASSWORDCOCKPIT_BLOCK_CIPHER_KEY: supersecretkey
+            PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: authenticationsecretkey
+            PASSWORDCOCKPIT_BASEHOST: localhost
+        depends_on:
+            - mysql
+    mysql:
+        image: mysql:5.7
+        container_name: mysql
+        ports:
+            - '3306:3306'
+        volumes:
+            - ./volumes/mysql:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=root_password
+            - MYSQL_USER=passwordcockpit_db_usr
+            - MYSQL_PASSWORD=password
+            - MYSQL_DATABASE=passwordcockpit
+        command: --character-set-server=utf8 --collation-server=utf8_unicode_ci

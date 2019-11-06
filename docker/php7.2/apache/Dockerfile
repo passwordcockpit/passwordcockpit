@@ -117,4 +117,7 @@ COPY --from=frontend_artifacts /usr/src/app/dist/* /var/www/html/public/
 
 VOLUME /var/www/html/data
 
+COPY entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["entrypoint.sh"]
+
 CMD ["apache2-foreground"]
