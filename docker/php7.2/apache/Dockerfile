@@ -82,6 +82,8 @@ RUN set -ex; \
     docker-php-ext-install opcache; \
     # pdo_mysql
     docker-php-ext-install pdo_mysql; \
+    # mod_rewrite extension
+    a2enmod rewrite; \
     \
 	# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
@@ -98,7 +100,7 @@ RUN set -ex; \
 	rm -rf /var/lib/apt/lists/*
     
 # set recommended PHP.ini settings
-# Set production configuration
+# set production configuration
 RUN mv /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 # see https://secure.php.net/manual/en/opcache.installation.php
 RUN { \
@@ -110,6 +112,10 @@ RUN { \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
     
 WORKDIR /var/www/html
+# set webroot
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # copy frontend_artifacts 
 COPY --from=backend_artifacts /var/www/html* /var/www/html/
