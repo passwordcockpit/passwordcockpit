@@ -3,7 +3,7 @@
 ##############################################
 # Configuration files
 ##############################################
-echo >&2 "Start creating configuration files"
+echo -e "\e[32mStart creating configuration files\e[0m"
 filename=config/autoload/db.local.php
 if [ ! -e $filename ]; then
 	{
@@ -107,41 +107,44 @@ if [ ! -e $filename ]; then
 		echo "define('SWAGGER_API_HOST', '${PASSWORDCOCKPIT_BASEHOST}');"
 	} >> $filename
 fi
-echo >&2 "Configuration files created"
+echo -e "\e[32mConfiguration files created\e[0m"
 
 
 ##############################################
 # Update frontend files
 ##############################################
-echo >&2 "Start updating frontend files"
+echo -e "\e[32mStart updating frontend files\e[0m"
 sed -ri -e 's!PASSWORDCOCKPIT_BASEHOST!'${PASSWORDCOCKPIT_BASEHOST}'!g' public/index.html
 sed -ri -e 's!PASSWORDCOCKPIT_BASEHOST!'${PASSWORDCOCKPIT_BASEHOST}'!g' public/assets/*.*
-echo >&2 "Frontend files updated "
+echo -e "\e[32mFrontend files updated\e[0m"
 
 
 ##############################################
 # Database
 ##############################################
-echo >&2 "Start configuring database"
+echo -e "\e[32mStart configuring database\e[0m"
+echo -e "\e[32mCheck database\e[0m"
 # database schema
 max_retries=10
 try=0
 until vendor/bin/doctrine orm:schema-tool:create || [ "$try" -gt "$max_retries" ]
 do
-	echo >&2 "retrying connection..."
+	echo -e "\e[31mRetrying connection...\e[0m"
 	try=$((try+1))
 	sleep 3s
 done
 if [ "$try" -gt "$max_retries" ]; then
-	echo >&2 "Installing failed!"
+	echo -e "\e[31mInstalling failed!\e[0m"
 	exit 1
 fi
 vendor/bin/doctrine orm:generate-proxies
-echo >&2 "DB schema created"
+echo -e "\e[32mDatabase created\e[0m"
 
 vendor/bin/doctrine dbal:import database/create-production-environment.sql
-echo >&2 "Production data installed"
+echo -e "\e[32mProduction data installed\e[0m"
 
-echo >&2 "Database configured"
+echo -e "\e[32mDatabase configured\e[0m"
+
+echo -e "\e[32mPasswordcockpit ready\e[0m"
 
 exec "$@"
