@@ -122,28 +122,46 @@ echo -e "\e[32mFrontend files updated\e[0m"
 ##############################################
 # Database
 ##############################################
-echo -e "\e[32mStart configuring database\e[0m"
-echo -e "\e[32mCheck database\e[0m"
-# database schema
+echo -e "\e[31Check database connection\e[0m"
 max_retries=10
 try=0
-until vendor/bin/doctrine orm:schema-tool:create || [ "$try" -gt "$max_retries" ]
+
+while [ "$try" -lt "$max_retries" ]
 do
-	echo -e "\e[31mRetrying connection...\e[0m"
-	try=$((try+1))
-	sleep 3s
+	connection=$(vendor/bin/doctrine dbal:run-sql "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'passwordcockpit'")
+	# schema_name is unset or set to the empty string so connecting problem
+	if [ -z "${connection}" ]; then
+		echo -e "\e[31mRetrying connection...\e[0m"
+		try=$((try+1))
+		sleep 3s
+		continue
+	fi
+	schema_exist=$(echo $connection | grep array | awk -F"[()]" '{print $2}')
+	# connection ok and schema exist
+	if [ "$schema_exist" == "1" ]; then
+		echo -e "\e[32mConnection ok\e[0m"
+		echo -e "\e[32mSchema already exist\e[0m"
+		# Update scripts
+		break
+	fi
+	# connection ok and schema not exist
+	if [ "$schema_exist" == "0" ]; then
+		echo -e "\e[32mConnection ok\e[0m"
+		echo -e "\e[32mSchema not exist\e[0m"
+		# Create the schema and popolate it
+		vendor/bin/doctrine orm:schema-tool:create
+		vendor/bin/doctrine orm:generate-proxies
+		echo -e "\e[32mDatabase created\e[0m"
+		vendor/bin/doctrine dbal:import database/create-production-environment.sql
+		echo -e "\e[32mProduction data installed\e[0m"
+		break
+	fi
 done
+# Connection error
 if [ "$try" -gt "$max_retries" ]; then
 	echo -e "\e[31mInstalling failed!\e[0m"
 	exit 1
 fi
-vendor/bin/doctrine orm:generate-proxies
-echo -e "\e[32mDatabase created\e[0m"
-
-vendor/bin/doctrine dbal:import database/create-production-environment.sql
-echo -e "\e[32mProduction data installed\e[0m"
-
-echo -e "\e[32mDatabase configured\e[0m"
 
 echo -e "\e[32mPasswordcockpit ready\e[0m"
 
