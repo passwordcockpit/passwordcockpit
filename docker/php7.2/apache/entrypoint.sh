@@ -128,7 +128,7 @@ try=0
 
 while [ "$try" -lt "$max_retries" ]
 do
-	connection=$(vendor/bin/doctrine dbal:run-sql "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'passwordcockpit'")
+	connection=$(vendor/bin/doctrine dbal:run-sql "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '${PASSWORDCOCKPIT_DATABASE_DATABASE}'")
 	# schema_name is unset or set to the empty string so connecting problem
 	if [ -z "${connection}" ]; then
 		echo -e "\e[31mRetrying connection...\e[0m"
@@ -141,19 +141,27 @@ do
 	if [ "$schema_exist" == "1" ]; then
 		echo -e "\e[32mConnection ok\e[0m"
 		echo -e "\e[32mSchema already exist\e[0m"
-		# Update scripts
+		# Tables exists
+		number_of_tables=$(vendor/bin/doctrine dbal:run-sql "SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${PASSWORDCOCKPIT_DATABASE_DATABASE}'" | grep string | awk -F\" '{ print $2 }')
+		if [ "$number_of_tables" == "0" ]; then
+			# Create the tables and popolate it
+			vendor/bin/doctrine orm:schema-tool:create
+			vendor/bin/doctrine orm:generate-proxies
+			echo -e "\e[32mDatabase created\e[0m"
+			vendor/bin/doctrine dbal:import database/create-production-environment.sql
+			echo -e "\e[32mProduction data installed\e[0m"
+		else
+			# Update scripts
+			echo -e "\e[32mNo updates to be carried out\e[0m"
+		fi
 		break
 	fi
-	# connection ok and schema not exist
+	# connection ok and schema not exist: error
 	if [ "$schema_exist" == "0" ]; then
 		echo -e "\e[32mConnection ok\e[0m"
-		echo -e "\e[32mSchema not exist\e[0m"
-		# Create the schema and popolate it
-		vendor/bin/doctrine orm:schema-tool:create
-		vendor/bin/doctrine orm:generate-proxies
-		echo -e "\e[32mDatabase created\e[0m"
-		vendor/bin/doctrine dbal:import database/create-production-environment.sql
-		echo -e "\e[32mProduction data installed\e[0m"
+		echo -e "\e[31mSchema not exist\e[0m"
+		echo -e "\e[31mInstalling failed!\e[0m"
+		exit 1
 		break
 	fi
 done
