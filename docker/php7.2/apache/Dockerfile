@@ -3,7 +3,7 @@
 ##############################################
 
 FROM php:7.2-apache as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=0.5.6
+ARG PASSWORDCOCKPIT_BACKEND_TAG=6e2156e7ea2281e6579b0a3c3f47a657792fa3cb
 RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends git
@@ -28,19 +28,25 @@ RUN rm -rf .git
 
 # clean application
 RUN rm -rf docker
-RUN rm -rf docs
 RUN rm -rf tests
 
 # install and build
 RUN composer install --prefer-dist
 
+# generate swagger documentation
+# create constants.local.php
+RUN { \
+	echo "<?php"; \
+    echo "define('SWAGGER_API_HOST', 'PASSWORDCOCKPIT_BASEHOST');"; \
+} > config/constants.local.php
+RUN composer swagger
 
 ##############################################
 # Build frontend artifacts
 ##############################################
 
 FROM node:8-alpine as frontend_artifacts
-ARG PASSWORDCOCKPIT_FRONTEND_TAG=0.5.1
+ARG PASSWORDCOCKPIT_FRONTEND_TAG=0bf36f0fcbddb0101ca100ce8d6e2a257fc18fc1
 RUN apk add git
 WORKDIR /usr/src/app
 

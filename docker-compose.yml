@@ -16,6 +16,7 @@ services:
             PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: authenticationsecretkey
             PASSWORDCOCKPIT_BASEHOST: http://localhost:8080
             PASSWORDCOCKPIT_AUTHENTICATION_TYPE: password
+            PASSWORDCOCKPIT_SWAGGER: enable
         depends_on:
             - mysql
     mysql:

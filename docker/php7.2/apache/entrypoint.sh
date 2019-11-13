@@ -100,13 +100,6 @@ elif [ "${PASSWORDCOCKPIT_AUTHENTICATION_TYPE}" == "password" ]; then
 	fi
 fi
 
-filename=config/constants.local.php
-if [ ! -e $filename ]; then
-	{
-		echo "<?php"
-		echo "define('SWAGGER_API_HOST', '${PASSWORDCOCKPIT_BASEHOST}');"
-	} >> $filename
-fi
 echo -e "\e[32mConfiguration files created\e[0m"
 
 
@@ -118,6 +111,16 @@ sed -ri -e 's!PASSWORDCOCKPIT_BASEHOST!'${PASSWORDCOCKPIT_BASEHOST}'!g' public/i
 sed -ri -e 's!PASSWORDCOCKPIT_BASEHOST!'${PASSWORDCOCKPIT_BASEHOST}'!g' public/assets/*.*
 echo -e "\e[32mFrontend files updated\e[0m"
 
+
+##############################################
+# Enable swagger
+##############################################
+if [ "${PASSWORDCOCKPIT_SWAGGER}" == "enable" ]; then
+	sed -ri -e 's!PASSWORDCOCKPIT_BASEHOST!'${PASSWORDCOCKPIT_BASEHOST}'!g' swagger/swagger.json
+	mv swagger public/swagger
+else
+	rm -rf swagger
+fi
 
 ##############################################
 # Database

@@ -5,9 +5,11 @@
 - PASSWORDCOCKPIT_DATABASE_PASSWORD: Password for the database
 - PASSWORDCOCKPIT_DATABASE_HOSTNAME: Hostname of the database server
 - PASSWORDCOCKPIT_DATABASE_DATABASE: Name of the database
-- PASSWORDCOCKPIT_BLOCK_CIPHER_KEY: Key for passwords and files encrypting, e.g. `passwordcockpit.domain.com`
-- PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: Key for JWT, e.g. `passwordcockpit.domain.com`
-- PASSWORDCOCKPIT_BASEHOST: Base host of the passwordcockpit service, e.g. `passwordcockpit.domain.com`
+- PASSWORDCOCKPIT_BLOCK_CIPHER_KEY: Key for passwords and files encrypting, e.g. `Q7EeZaHdMV7PMBGrNRre27MFXLEKqMAS`
+- PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: Key for JWT, e.g. `zfYKN7Z8XW8McgKaSD2uSNmQQ9dPmgTz`
+- PASSWORDCOCKPIT_BASEHOST: Base host of the passwordcockpit service, e.g. `https://passwordcockpit.domain.com`
+- PASSWORDCOCKPIT_SWAGGER: Enable swagger documentation, possible value: `enable` or `disable`. URL: PASSWORDCOCKPIT_BASEHOST/swagger
+
 - PASSWORDCOCKPIT_AUTHENTICATION_TYPE: Type of the authentication, possible value: `ldap` or `password`
 	- Only for LDAP type:
 		- PASSWORDCOCKPIT_LDAP_HOST: Hostname of the LDAP server
