@@ -2,7 +2,7 @@
 # Build backend artifacts
 ##############################################
 
-FROM php:7.2-apache as backend_artifacts
+FROM php:7.3-apache as backend_artifacts
 ARG PASSWORDCOCKPIT_BACKEND_TAG=6e2156e7ea2281e6579b0a3c3f47a657792fa3cb
 RUN set -ex; \
     apt-get update; \
@@ -72,7 +72,7 @@ RUN ember build -p
 # Build the HTML and PHP container
 ##############################################
 
-FROM php:7.2-apache
+FROM php:7.3-apache
 RUN set -ex; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
