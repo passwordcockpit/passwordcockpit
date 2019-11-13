@@ -14,7 +14,7 @@ services:
             PASSWORDCOCKPIT_DATABASE_DATABASE: passwordcockpit
             PASSWORDCOCKPIT_BLOCK_CIPHER_KEY: supersecretkey
             PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: authenticationsecretkey
-            PASSWORDCOCKPIT_BASEHOST: localhost
+            PASSWORDCOCKPIT_BASEHOST: http://localhost:8080
             PASSWORDCOCKPIT_AUTHENTICATION_TYPE: password
         depends_on:
             - mysql

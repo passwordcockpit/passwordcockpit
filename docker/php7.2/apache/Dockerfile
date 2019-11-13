@@ -116,10 +116,12 @@ WORKDIR /var/www/html
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+# set DirectoryIndex priority to index.html
+RUN sed -ri -e 's!DirectoryIndex index.php index.html!DirectoryIndex index.html index.php!g' /etc/apache2/conf-available/docker-php.conf
 
 # copy frontend_artifacts 
-COPY --from=backend_artifacts /var/www/html* /var/www/html/
-COPY --from=frontend_artifacts /usr/src/app/dist/* /var/www/html/public/
+COPY --from=backend_artifacts /var/www/html /var/www/html/
+COPY --from=frontend_artifacts /usr/src/app/dist /var/www/html/public/
 
 VOLUME /var/www/html/data
 
