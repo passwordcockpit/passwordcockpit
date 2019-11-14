@@ -17,7 +17,7 @@ To start, just copy [`docker-compose.yml`](./docker-compose.yml) to a folder and
 - `PASSWORDCOCKPIT_DATABASE_DATABASE`: Name of the database
 - `PASSWORDCOCKPIT_BLOCK_CIPHER`_KEY: Key for passwords and files encrypting, e.g. `Q7EeZaHdMV7PMBGrNRre27MFXLEKqMAS`
 - `PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY`: Key for JWT, e.g. `zfYKN7Z8XW8McgKaSD2uSNmQQ9dPmgTz`
-- `PASSWORDCOCKPIT_BASEHOST`: Base host of the passwordcockpit service, e.g. `https://passwordcockpit.domain.com`
+- `PASSWORDCOCKPIT_BASEHOST`: Base host of the Passwordcockpit service, e.g. `https://passwordcockpit.domain.com`
 - `PASSWORDCOCKPIT_SWAGGER`: Enable swagger documentation, possible value: `enable` or `disable`. URL: PASSWORDCOCKPIT_BASEHOST/swagger
 - `PASSWORDCOCKPIT_SSL`: Enable SSL, possible value: `enable` or `disable`. If enabled use port 443 if not, the port 80, the two ports cannot be opened at the same time. If enabled, the system generate a self-signed certificate, this can be replaced with volumes
 - `PASSWORDCOCKPIT_AUTHENTICATION_TYPE`: Type of the authentication, possible value: `ldap` or `password`
