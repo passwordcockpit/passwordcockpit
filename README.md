@@ -1,4 +1,4 @@
-# password-cockpit
+# Passwordcockpit
 
 ## Docker
 ### Volumes
