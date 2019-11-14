@@ -3,7 +3,7 @@
 ##############################################
 
 FROM php:7.3-apache as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=6e2156e7ea2281e6579b0a3c3f47a657792fa3cb
+ARG PASSWORDCOCKPIT_BACKEND_TAG=7514025df76bd82ddcfb0da91e8cf0e2cce08e21
 RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends git
@@ -31,7 +31,7 @@ RUN rm -rf docker
 RUN rm -rf tests
 
 # install and build
-RUN composer install --prefer-dist
+RUN composer install --prefer-dist --optimize-autoloader --no-dev
 
 # generate swagger documentation
 # create constants.local.php
