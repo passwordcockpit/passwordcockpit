@@ -130,7 +130,7 @@ echo -e "\e[32mSwagger ok\e[0m"
 echo -e "\e[32mStart SSL part\e[0m"
 if [ "${PASSWORDCOCKPIT_SSL}" == "enable" ]; then
 	domain=$(echo ${PASSWORDCOCKPIT_BASEHOST}:8080 | awk -F[/:] '{print $4}')
-	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=$domain" -keyout /etc/ssl/private/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=CH/ST=ZH/L=Zurich/O=Passwordcockpit/CN=$domain" -keyout /etc/ssl/private/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt
 	sed -ri -e 's!ssl-cert-snakeoil.pem!'passwordcockpit.crt'!g' /etc/apache2/sites-available/default-ssl.conf
 	sed -ri -e 's!ssl-cert-snakeoil.key!'passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf
 	rm -rf /etc/apache2/sites-enabled/000-default.conf

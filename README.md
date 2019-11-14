@@ -1,6 +1,12 @@
 # password-cockpit
 
-## Environment variables for configuring your passwordcockpit instance
+## Docker
+### Volumes
+- /var/www/html/data: contain attached files to passwords, important to map to make data persistent 
+- /etc/ssl/certs/passwordcockpit.crt: SSL certificate file for HTTPS, used to overwrite the self-signed auto generated file, e.g. `./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro`. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate**
+- /etc/ssl/private/passwordcockpit.key: SSL certificate key file for HTTPS, used to overwrite the self-signed auto generated file, e.g. `./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro`. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate**
+
+### Environment variables for configuring your passwordcockpit instance
 - PASSWORDCOCKPIT_DATABASE_USERNAME: Username for the database
 - PASSWORDCOCKPIT_DATABASE_PASSWORD: Password for the database
 - PASSWORDCOCKPIT_DATABASE_HOSTNAME: Hostname of the database server
@@ -9,9 +15,7 @@
 - PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: Key for JWT, e.g. `zfYKN7Z8XW8McgKaSD2uSNmQQ9dPmgTz`
 - PASSWORDCOCKPIT_BASEHOST: Base host of the passwordcockpit service, e.g. `https://passwordcockpit.domain.com`
 - PASSWORDCOCKPIT_SWAGGER: Enable swagger documentation, possible value: `enable` or `disable`. URL: PASSWORDCOCKPIT_BASEHOST/swagger
-- PASSWORDCOCKPIT_SSL: Enable SSL, possible value: `enable` or `disable`. If enabled use port 443 if not, the port 80, the two ports cannot be opened at the same time. If enabled, the system generate a self-signed certificate
-- PASSWORDCOCKPIT_SSL_CERTIFICATE_FILE: Path of the SSL certificate file for HTTPS, this will overwrite the self-signed auto generated file
-- PASSWORDCOCKPIT_SSL_CERTIFICATE_KEY_FILE: Path of the SSL certificate key file for HTTPS, this will overwrite the self-signed auto generated file
+- PASSWORDCOCKPIT_SSL: Enable SSL, possible value: `enable` or `disable`. If enabled use port 443 if not, the port 80, the two ports cannot be opened at the same time. If enabled, the system generate a self-signed certificate, this can be replaced with volumes
 - PASSWORDCOCKPIT_AUTHENTICATION_TYPE: Type of the authentication, possible value: `ldap` or `password`
 	- Only for LDAP type:
 		- PASSWORDCOCKPIT_LDAP_HOST: Hostname of the LDAP server
