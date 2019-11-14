@@ -22,7 +22,7 @@ To start, just copy [`docker-compose.yml`](./docker-compose.yml) to a folder and
 - `PASSWORDCOCKPIT_SSL`: Enable SSL, possible value: `enable` or `disable`. If enabled use port 443 if not, the port 80, the two ports cannot be opened at the same time. If enabled, the system generate a self-signed certificate, this can be replaced with volumes
 - `PASSWORDCOCKPIT_AUTHENTICATION_TYPE`: Type of the authentication, possible value: `ldap` or `password`
 
-**Only for LDAP type:**
+##### Only for LDAP type
 - `PASSWORDCOCKPIT_LDAP_HOST`: Hostname of the LDAP server
 - `PASSWORDCOCKPIT_LDAP_PORT`: Port of the LDAP server
 - `PASSWORDCOCKPIT_LDAP_USERNAME`: Username for LDAP, e.g. `uid=name,cn=users,dc=domain,dc=com`
