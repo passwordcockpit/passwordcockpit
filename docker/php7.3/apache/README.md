@@ -1,11 +1,11 @@
-# passwordcockpit docker
+# Passwordcockpit image
 
-# Build image
-## With predefined tags
+## Build the image
+### With predefined tags in the Dockerfile
 docker build -t passwordcockpit/passwordcockpit:1.0.0 .
 
-## With custom tags
+### With custom tags
 docker build -t passwordcockpit/passwordcockpit:1.0.0 --build-arg PASSWORDCOCKPIT_BACKEND_TAG=0.5.6 --build-arg PASSWORDCOCKPIT_FRONTEND_TAG=0.5.1 .
 
-# Run
+## Run
 docker run passwordcockpit/passwordcockpit:1.0.0
