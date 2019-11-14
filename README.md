@@ -1,11 +1,10 @@
 # Passwordcockpit
 
-## Docker
 Passwordcockpit provides updated Docker images within [its Docker Hub organization](https://hub.docker.com/u/passwordcockpit).<br>
 This reference setup guides users through the setup based on docker-compose (the installation of docker-compose is out of scope of this documentation, [official install instructions](https://docs.docker.com/compose/install/)).<br>
 To start, just copy [`docker-compose.yml`](./docker-compose.yml) to a folder and run `docker-compose up`.
 
-### Configurations
+### Docker configurations
 #### Volumes
 - `/var/www/html/data`: contain attached files to passwords, important to map to make data persistent 
 - `/etc/ssl/certs/passwordcockpit.crt`: SSL certificate file for HTTPS, used to overwrite the self-signed auto generated file, e.g. `./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro`. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate**
