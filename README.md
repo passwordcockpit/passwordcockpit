@@ -9,7 +9,7 @@
 - PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: Key for JWT, e.g. `zfYKN7Z8XW8McgKaSD2uSNmQQ9dPmgTz`
 - PASSWORDCOCKPIT_BASEHOST: Base host of the passwordcockpit service, e.g. `https://passwordcockpit.domain.com`
 - PASSWORDCOCKPIT_SWAGGER: Enable swagger documentation, possible value: `enable` or `disable`. URL: PASSWORDCOCKPIT_BASEHOST/swagger
-- PASSWORDCOCKPIT_SSL: Enable SSL, possible value: `enable` or `disable`. If enabled use port 443 if not, the port 80
+- PASSWORDCOCKPIT_SSL: Enable SSL, possible value: `enable` or `disable`. If enabled use port 443 if not, the port 80, the two ports cannot be opened at the same time. If enabled, the system generate a self-signed certificate
 - PASSWORDCOCKPIT_SSL_CERTIFICATE_FILE: Path of the SSL certificate file for HTTPS, this will overwrite the self-signed auto generated file
 - PASSWORDCOCKPIT_SSL_CERTIFICATE_KEY_FILE: Path of the SSL certificate key file for HTTPS, this will overwrite the self-signed auto generated file
 - PASSWORDCOCKPIT_AUTHENTICATION_TYPE: Type of the authentication, possible value: `ldap` or `password`
