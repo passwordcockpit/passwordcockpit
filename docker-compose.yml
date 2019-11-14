@@ -4,7 +4,8 @@ services:
         image: passwordcockpit/passwordcockpit:1.0.0
         container_name: passwordcockpit
         ports:
-            - "8080:80"
+            #- "8080:80"
+            - "4343:443"
         volumes:
             - ./volumes/data:/var/www/html/data
         environment:
@@ -14,9 +15,13 @@ services:
             PASSWORDCOCKPIT_DATABASE_DATABASE: passwordcockpit
             PASSWORDCOCKPIT_BLOCK_CIPHER_KEY: supersecretkey
             PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: authenticationsecretkey
-            PASSWORDCOCKPIT_BASEHOST: http://localhost:8080
+            #PASSWORDCOCKPIT_BASEHOST: http://localhost:8080
+            PASSWORDCOCKPIT_BASEHOST: https://localhost:4343
             PASSWORDCOCKPIT_AUTHENTICATION_TYPE: password
             PASSWORDCOCKPIT_SWAGGER: enable
+            PASSWORDCOCKPIT_SSL: enable
+            #PASSWORDCOCKPIT_SSL_CERTIFICATE_FILE:
+            #PASSWORDCOCKPIT_SSL_CERTIFICATE_KEY_FILE: 
         depends_on:
             - mysql
     mysql:

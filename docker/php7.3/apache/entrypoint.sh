@@ -115,12 +115,28 @@ echo -e "\e[32mFrontend files updated\e[0m"
 ##############################################
 # Enable swagger
 ##############################################
+echo -e "\e[32mStart swagger part\e[0m"
 if [ "${PASSWORDCOCKPIT_SWAGGER}" == "enable" ]; then
 	sed -ri -e 's!PASSWORDCOCKPIT_BASEHOST!'${PASSWORDCOCKPIT_BASEHOST}'!g' swagger/swagger.json
 	mv swagger public/swagger
 else
 	rm -rf swagger
 fi
+echo -e "\e[32mSwagger ok\e[0m"
+
+##############################################
+# SSL
+##############################################
+echo -e "\e[32mStart SSL part\e[0m"
+if [ "${PASSWORDCOCKPIT_SSL}" == "enable" ]; then
+	domain=$(echo ${PASSWORDCOCKPIT_BASEHOST}:8080 | awk -F[/:] '{print $4}')
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=$domain" -keyout /etc/ssl/private/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt
+	sed -ri -e 's!ssl-cert-snakeoil.pem!'passwordcockpit.crt'!g' /etc/apache2/sites-available/default-ssl.conf
+	sed -ri -e 's!ssl-cert-snakeoil.key!'passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf
+	rm -rf /etc/apache2/sites-enabled/000-default.conf
+	mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
+fi
+echo -e "\e[32mSSL ok\e[0m"
 
 ##############################################
 # Database

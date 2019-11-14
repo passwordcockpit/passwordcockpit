@@ -90,6 +90,8 @@ RUN set -ex; \
     docker-php-ext-install pdo_mysql; \
     # mod_rewrite extension
     a2enmod rewrite; \
+    # ssl extension
+    a2enmod ssl; \
     \
 	# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
