@@ -1,7 +1,7 @@
 # Passwordcockpit
 
 Passwordcockpit provides updated Docker images within [its Docker Hub organization](https://hub.docker.com/u/passwordcockpit).<br>
-This reference setup guides users through the setup based on docker-compose (the installation of docker-compose is out of scope of this documentation, [official install instructions](https://docs.docker.com/compose/install/)).<br>
+This reference setup guides users through the setup based on docker-compose (the installation of docker-compose is out of scope of this documentation, see the [official install instructions](https://docs.docker.com/compose/install/)).<br>
 To start, just copy [`docker-compose.yml`](./docker-compose.yml) to a folder and run `docker-compose up`.
 
 ### Docker configurations
