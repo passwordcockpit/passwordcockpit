@@ -29,7 +29,7 @@ To start, just copy [`docker-compose.yml`](./docker-compose.yml) to a folder, se
 - `PASSWORDCOCKPIT_SSL`: Enable SSL, possible value: `enable` or `disable`. If enabled the port 443 will be used, and the system will generate a self-signed certificate that can be replaced with what is specified in the volumes configuration. If disabled, the port 80 will be used. The two ports cannot be opened at the same time.
 - `PASSWORDCOCKPIT_AUTHENTICATION_TYPE`: Type of the authentication, possible value: `ldap` or `password`
 
-##### Only for LDAP type
+#### LDAP variables if needed 
 - `PASSWORDCOCKPIT_LDAP_HOST`: Hostname of the LDAP server
 - `PASSWORDCOCKPIT_LDAP_PORT`: Port of the LDAP server
 - `PASSWORDCOCKPIT_LDAP_USERNAME`: Username for LDAP, e.g. `uid=name,cn=users,dc=domain,dc=com`
@@ -46,12 +46,13 @@ the default admin user has the following credentials:
 - password: `Admin123!`
 
 ## Technologies
+Passwordcockpit uses [Docker](https://www.docker.com/) to rapidly deploy the environment. The images have been optimized to reflect the need of the application, providing great performance.
+
 The application itself follows the RESTFUL architecture. <br>
 There are 3 levels of encryption:
 - A PIN that the user can place on a password
 - SSL encryption to transfer data to the server
 - Database encryption for login informations, passwords and files.
-
 
 ### Frontend
 Frontend has been developed using [`Ember.js`](https://emberjs.com/). <br>
@@ -60,11 +61,53 @@ More information on the technologies used by the frontend [can be found here](ht
 
 ### Backend
 The server side of Passwordcockpit uses [`Zend Expressive`](https://docs.zendframework.com/zend-expressive/).
-Login information are stored using [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt) which uses OpenBSD. <br>
-Password entitites and files are crypted with [Zend\Crypt](https://docs.zendframework.com/zend-crypt/), using sha-256.<br>
-User session are handled with [JWT tokens](https://jwt.io/).
+All encryptions listed below are customizable with a custom key, adding cryptographic salt to hashes to mitigate rainbow tables:
+- Login information are stored using [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt) which uses OpenBSD. <br>
+- Password entitites and files are crypted with [Zend\Crypt](https://docs.zendframework.com/zend-crypt/), using sha-256.<br>
+- User session are handled with [JWT tokens](https://jwt.io/), encrypted with HS256.
 
-All encryptions are customizable with custom key to add cryptographic salt to hashes and thus mitigate rainbow tables.
+Passwordcockpit is customizable through configuration files. Owners can decide values such as failed login attempts, login modes, client IPs for CORS and much more.
+
+### Database
+
+Database uses [`mysql`](https://www.mysql.com/).
+
+
+## Features
+One of the strong assets of Passwordcockpit is the folder sharing system, making it useful for enterprises.
+
+The folder system works as follows:
+- Folders can contain passwords and other folders.
+- Each folder has a list of associated users and their permission (read/edit mode).
+- Users can be associated to a folder even if they do not have permission of parent folder.
+
+Users can be managed by admins with the following features:
+- Create new users.
+- Deactivate users.
+- Modify users information. Normal users have the ability to change information on themself.
+
+Password can be created by users who have edit mode on the folder:
+- Password can be crypted by creator to hide it from admins.
+- Passwords also contains fields such as URL, description, username and much more.
+- Ability to associate a file to a password.
+
+## Screenshots
+
+### Login page
+
+### /folders
+
+### /folders/1
+
+### /folders/1/password/1
+
+### /manage-profile
+
+### /users
+
+### /users/1
+
+
 
 
 
