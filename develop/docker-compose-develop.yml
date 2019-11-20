@@ -1,0 +1,52 @@
+version: "3.5"
+services:
+  passwordcockpit_backend:
+    image: passwordcockpit/backend:dev-1.0.0
+    container_name: passwordcockpit_backend
+    ports:
+      - "4344:443"
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      PASSWORDCOCKPIT_DATABASE_USERNAME: passwordcockpit_db_usr
+      PASSWORDCOCKPIT_DATABASE_PASSWORD: password
+      PASSWORDCOCKPIT_DATABASE_HOSTNAME: passwordcockpit_database
+      PASSWORDCOCKPIT_DATABASE_DATABASE: passwordcockpit
+      PASSWORDCOCKPIT_BLOCK_CIPHER_KEY: supersecretkey
+      PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: authenticationsecretkey
+      PASSWORDCOCKPIT_SWAGGER_API_HOST: http://[YOUR-IP]:4200
+      PASSWORDCOCKPIT_CLIENT_ADDRESS: http://[YOUR-IP]:4200
+    depends_on:
+      - passwordcockpit_database
+    networks:
+      - passwordcockpit_network
+  passwordcockpit_frontend:
+    image: passwordcockpit/frontend:dev-1.0.0
+    container_name: passwordcockpit_frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/var/www/html
+    environment:
+      PASSWORDCOCKPIT_BASEHOST: https://[YOUR-IP]:4344
+    networks:
+      - passwordcockpit_network
+    command: ember serve --port 4200
+  passwordcockpit_database:
+    image: mariadb:latest
+    volumes:
+      - ./database:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=passwordcockpit_db_usr
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=passwordcockpit
+    command: --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    ports:
+      - "3306:3306"
+    networks:
+      - passwordcockpit_network
+networks:
+  passwordcockpit_network:
+    name: passwordcockpit_network
