@@ -162,11 +162,11 @@ do
 		echo -e "\e[32mSchema already exist\e[0m"
 		# Tables exists
 		number_of_tables=$(vendor/bin/doctrine dbal:run-sql "SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${PASSWORDCOCKPIT_DATABASE_DATABASE}'" | grep string | awk -F\" '{ print $2 }')
+		# Create the tables and popolate it
+		vendor/bin/doctrine-migrations migrate
+		vendor/bin/doctrine orm:generate-proxies
+		echo -e "\e[32mDatabase created or updated\e[0m"
 		if [ "$number_of_tables" == "0" ]; then
-			# Create the tables and popolate it
-			vendor/bin/doctrine orm:schema-tool:create
-			vendor/bin/doctrine orm:generate-proxies
-			echo -e "\e[32mDatabase created\e[0m"
 			vendor/bin/doctrine dbal:import database/create-production-environment.sql
 			echo -e "\e[32mProduction data installed\e[0m"
             if [ "${PASSWORDCOCKPIT_ADMIN_PASSWORD}" != "" ]; then
@@ -174,9 +174,7 @@ do
                 vendor/bin/doctrine dbal:run-sql "UPDATE user SET password = '$bcrypted_admin_password' WHERE user_id = 1"
                 echo -e "\e[32mAdmin password modified\e[0m"
             fi
-		else
-			# Update scripts
-			echo -e "\e[32mNo updates to be carried out\e[0m"
+
 		fi
 		break
 	fi
