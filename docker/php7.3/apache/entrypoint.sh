@@ -167,14 +167,13 @@ do
 		vendor/bin/doctrine orm:generate-proxies
 		echo -e "\e[32mDatabase created or updated\e[0m"
 		if [ "$number_of_tables" == "0" ]; then
-			vendor/bin/doctrine dbal:import database/create-production-environment.sql
-			echo -e "\e[32mProduction data installed\e[0m"
-            if [ "${PASSWORDCOCKPIT_ADMIN_PASSWORD}" != "" ]; then
-                bcrypted_admin_password=$(/usr/local/bin/php -r "echo password_hash('${PASSWORDCOCKPIT_ADMIN_PASSWORD}', PASSWORD_BCRYPT);")
-                vendor/bin/doctrine dbal:run-sql "UPDATE user SET password = '$bcrypted_admin_password' WHERE user_id = 1"
-                echo -e "\e[32mAdmin password modified\e[0m"
-            fi
-
+		    vendor/bin/doctrine dbal:import database/create-production-environment.sql
+	            echo -e "\e[32mProduction data installed\e[0m"
+		    if [ "${PASSWORDCOCKPIT_ADMIN_PASSWORD}" != "" ]; then
+			bcrypted_admin_password=$(/usr/local/bin/php -r "echo password_hash('${PASSWORDCOCKPIT_ADMIN_PASSWORD}', PASSWORD_BCRYPT);")
+			vendor/bin/doctrine dbal:run-sql "UPDATE user SET password = '$bcrypted_admin_password' WHERE user_id = 1"
+			echo -e "\e[32mAdmin password modified\e[0m"
+		    fi
 		fi
 		break
 	fi
