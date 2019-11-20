@@ -30,13 +30,16 @@ the `docker-compose up` command may take a while. The web application will be re
 passwordcockpit_frontend    | Build successful (....ms) – Serving on http://localhost:4200/
 ```
 
-The current branch on both `frontend` and `backend` is `develop`, but the current developing branch is the `1.0.0-dev`. You should checkout this branch and wait for ember to rebuild.
+The current branch on both `frontend` and `backend` is `develop`, but is an old develop branch. Please check the GIT and see the current branch. You should checkout to this branch and call `docker-compose restart passwordcockpit_frontend`.
+
 After that, go to `[YOUR-IP]:4200`. If everything went correctly, there should be a login page.<br>
 
-The default login credentials are:
+The default admin login credentials are:
 - username: admin
 - password: Admin123!
 
-If the first login results in a `Undefined error`, the certificate needs to be accepted. In most browsers, go to `[YOUR-IP]:4344` and accept it.
+Default user:
+- username: user
+- password: User123!
 
-Login again, and the application is ready to be used.
+If the first login results in a `Undefined error`, the certificate needs to be accepted. In most browsers, go to `[YOUR-IP]:4344` and accept it.
