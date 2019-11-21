@@ -1,95 +1,149 @@
-# Passwordcockpit
+<style>
+table {
+  font-size: 0.8em
+}
+thead{
+    background-color: #fefefe;
+}
+</style>
 
-## General
+<p align="center" style="padding-top:30px"><img src="https://raw.githubusercontent.com/passwordcockpit/frontend/master/public/assets/images/logo.svg?sanitize=true" width="400"></p>
 
-Passwordcockpit is a self hosted open source password manager. It allows users to safely store, share and retrieve passwords, certificates, files and much more.
+<p align="center">Passwordcockpit is a simple, free and open source self hosted password manager for team based on PHP and MySQL, which runs on a docker service. It allows users with any kind of device to safely store, share and retrieve passwords, certificates, files and much more.</p>
 
-## Installation
+<p align="center">
+<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/passwordcockpit/passwordcockpit">
+<img alt="GitHub License" src="https://img.shields.io/github/license/passwordcockpit/passwordcockpit">
+</p>
 
+
+# Index
+- [Using it](#-using-it)
+- [Permissions](#-permissions)
+- [Authentication](#-authentication)
+- [Encryption](#-encryption)
+- [Available docker configurations](#-available-docker-configurations)
+- [Architecture and technologies](#-architecture-and-technologies)
+- [Security](#-security)
+- [Vulnerability](#-vulnerability)
+- [Contribute](#-contribute)
+- [Screenshots](#-screenshots)
+
+
+# Using it
 Installation is done with `docker-compose`. To install it, please see the [official install instructions](https://docs.docker.com/compose/install/).<br>
-Passwordcockpit docker images are provided within [its Docker Hub organization](https://hub.docker.com/u/passwordcockpit).<br>
+Passwordcockpit docker images are provided within [its Docker Hub organization](https://hub.docker.com/u/passwordcockpit).<br><br>
+To start, just copy [`docker-compose.yml`](./docker-compose.yml) to a folder, setup the configuration as shown in the "Available docker configurations" chapter, and run `docker-compose up`.<br><br>
+When the service is up, navigate to `PASSWORDCOCKPIT_BASEHOST` (e.g. `https://passwordcockpit.domain.com`) and login.<br><br>
+The default username is `admin` and if is not set `PASSWORDCOCKPIT_ADMIN_PASSWORD`, the system generate the default password: `Admin123!`
 
-To start, just copy [`docker-compose.yml`](./docker-compose.yml) to a folder, setup the configuration as shown below, and run `docker-compose up`.
 
-### Docker configurations
-#### Volumes
-- `/var/www/html/data`: contain attached files to passwords, important to map to make data persistent 
-- `/etc/ssl/certs/passwordcockpit.crt`: SSL certificate file for HTTPS, used to overwrite the self-signed auto generated file, e.g. `./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro`. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate**
-- `/etc/ssl/private/passwordcockpit.key`: SSL certificate key file for HTTPS, used to overwrite the self-signed auto generated file, e.g. `./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro`. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate**
+# Permissions
+## Global permissions
+Each user can have following permissions:<br><br>
+⚫️ Nothing (a normal user)<br>
+👥 Create and manage users<br>
+📁 Create folders<br>
+🗄 Access to all directiories<br>
+📊 Can view log
 
-#### Environment variables
-- `PASSWORDCOCKPIT_DATABASE_USERNAME`: Username for the database
-- `PASSWORDCOCKPIT_DATABASE_PASSWORD`: Password for the database
-- `PASSWORDCOCKPIT_DATABASE_HOSTNAME`: Hostname of the database server
-- `PASSWORDCOCKPIT_DATABASE_DATABASE`: Name of the database
-- `PASSWORDCOCKPIT_BLOCK_CIPHER`_KEY: Key for passwords and files encrypting, e.g. `Q7EeZaHdMV7PMBGrNRre27MFXLEKqMAS`
-- `PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY`: Key for encrypting JSON Web Tokens, e.g. `zfYKN7Z8XW8McgKaSD2uSNmQQ9dPmgTz`
-- `PASSWORDCOCKPIT_BASEHOST`: Base host of the Passwordcockpit service, e.g. `https://passwordcockpit.domain.com`
-- `PASSWORDCOCKPIT_SWAGGER`: Enable swagger documentation, possible value: `enable` or `disable`. if enabled, documentation can be seen here: `PASSWORDCOCKPIT_BASEHOST/swagger`
-- `PASSWORDCOCKPIT_SSL`: Enable SSL, possible value: `enable` or `disable`. If enabled the port 443 will be used, and the system will generate a self-signed certificate that can be replaced with what is specified in the volumes configuration. If disabled, the port 80 will be used. The two ports cannot be opened at the same time.
-- `PASSWORDCOCKPIT_AUTHENTICATION_TYPE`: Type of the authentication, possible value: `ldap` or `password`
+## Folder permissions
+Each folder has a list of associated users with their permission:<br><br>
+⛔️ No access (If a user is not assigned to a folder cann't access)<br>
+👁 Read (If a user is assigned to a folder, can read selected folder's password)<br>
+✏️ Manage (The user can add, modify and delete passwords inside the folder)<br><br>
+Users can be associated to a folder even if they do not have permission of parent folder.
 
-#### LDAP variables if needed 
-- `PASSWORDCOCKPIT_LDAP_HOST`: Hostname of the LDAP server
-- `PASSWORDCOCKPIT_LDAP_PORT`: Port of the LDAP server
-- `PASSWORDCOCKPIT_LDAP_USERNAME`: Username for LDAP, e.g. `uid=name,cn=users,dc=domain,dc=com`
-- `PASSWORDCOCKPIT_LDAP_PASSWORD`: Password for LDAP
-- `PASSWORDCOCKPIT_LDAP_BASEDN`: Base DN, e.g. `cn=users,dc=domain,dc=com`
-- `PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT`: Filter for retrieving accounts, e.g. `(&(memberOf=cn=group_name,cn=groups,dc=domain,dc=com)(uid=%s))`
-- `PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN`: Bind requires DN, possible value: `true` or `false`
 
-### First steps
+# Authentication
+Authentication can be executed with password stored in the database or with LDAP.
 
-After the installation, navigate to `PASSWORDCOCKPIT_BASEHOST` and there will be a login page.<br>
-the default admin user has the following credentials:
-- username: `admin`
-- password: `Admin123!`
+## LDAP
+To use LDAP, users must exist in Passwordcockpit. The match of PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT is done with the username.
 
-## Technologies
-Passwordcockpit uses [Docker](https://www.docker.com/) to rapidly deploy the environment. The images have been optimized to reflect the need of the application, providing great performance.
+When LDAP is enabled, it is no longer possible to modify the profile data because they will be synchronized at each login.
 
-The application itself follows the RESTFUL architecture. <br>
+
+# Encryption
 There are 3 levels of encryption:
-- A PIN that the user can place on a password
+- Password PIN
 - SSL encryption to transfer data to the server
 - Database encryption for login informations, passwords and files.
 
-### Frontend
-Frontend has been developed using [`Ember.js`](https://emberjs.com/). <br>
-The PIN encryption available to the user is made with Stanford Javascritp Crypto Library, using AES-CCM.
-More information on the technologies used by the frontend [can be found here](https://github.com/passwordcockpit/frontend/blob/master/README.md).
+## Password PIN
+Password can be crypted with a personal PIN to hide it from users with permission "Access to all directiories" and users assigned to the same directory.
 
-### Backend
-The server side of Passwordcockpit uses [`Zend Expressive`](https://docs.zendframework.com/zend-expressive/).
-All encryptions listed below are customizable with a custom key, adding cryptographic salt to hashes to mitigate rainbow tables:
-- Login information are stored using [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt) which uses OpenBSD. <br>
-- Password entitites and files are crypted with [Zend\Crypt](https://docs.zendframework.com/zend-crypt/), using sha-256.<br>
-- User session are handled with [JWT tokens](https://jwt.io/), encrypted with HS256.
 
-Passwordcockpit is customizable through configuration files. Owners can decide values such as failed login attempts, login modes, client IPs for CORS and much more.
+# Available docker configurations
+| Container volume | Description |
+| - | - |
+| `/var/www/html/data`  | Contain attached files to passwords, important to map to make data persistent. |
+| `/etc/ssl/certs/passwordcockpit.crt`  | SSL certificate file for HTTPS, used to overwrite the self-signed auto generated file, e.g. `./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro`. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate**  |
+| `/etc/ssl/private/passwordcockpit.key`  | SSL certificate key file for HTTPS, used to overwrite the self-signed auto generated file, e.g. `./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro`. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate** |
 
-### Database
+| Environment variable | Description | Example |
+| - | - | - |
+| `PASSWORDCOCKPIT_DATABASE_USERNAME`  | Username for the database  | `username` |
+| `PASSWORDCOCKPIT_DATABASE_PASSWORD`  | Password for the database  | `password`  |
+| `PASSWORDCOCKPIT_DATABASE_HOSTNAME`  | Hostname of the database server  | `mysql` |
+| `PASSWORDCOCKPIT_DATABASE_DATABASE`  | Name of the database  | `passwordcockpit`  |
+| `PASSWORDCOCKPIT_BLOCK_CIPHER_KEY`  | Key for passwords and files encrypting. **IMPORTANT: don't lose this key, without this you will not be able to decrypt passwords and files**  | `Q7EeZaHdMV7PMBGrNRre27MFXLEKqMAS`  |
+| `PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY`  | Key for encrypting JSON Web Tokens  | `zfYKN7Z8XW8McgKaSD2uSNmQQ9dPmgTz`  |
+| `PASSWORDCOCKPIT_BASEHOST`  | Base host of the Passwordcockpit service  | `https://passwordcockpit.domain.com`  |
+| `PASSWORDCOCKPIT_SWAGGER`  | Enable swagger documentation, possible value: `enable` or `disable`. If enabled, documentation can be seen here: `PASSWORDCOCKPIT_BASEHOST/swagger`  | `enable` |
+| `PASSWORDCOCKPIT_SSL`  | Enable SSL, possible value: `enable` or `disable`. If enabled the port 443 will be used, and the system will generate a self-signed certificate that can be replaced with what is specified in the volumes configuration. If disabled, the port 80 will be used. The two ports cannot be opened at the same time.  | `enable`  |
+| `PASSWORDCOCKPIT_ADMIN_PASSWORD`  | Admin password to log in passwordcockpit  | `username` |
+| `PASSWORDCOCKPIT_AUTHENTICATION_TYPE`  | Type of the authentication, possible value: `ldap` or `password`  | `password`  |
 
+| LDAP variables (only necessary if LDAP is enabled) | Description | Example |
+| - | - | - |
+| `PASSWORDCOCKPIT_LDAP_HOST`  | Hostname of the LDAP server  | `ldap`  |
+| `PASSWORDCOCKPIT_LDAP_PORT`  | Port of the LDAP server  | `389` |
+| `PASSWORDCOCKPIT_LDAP_USERNAME`  | Username for LDAP  | `uid=name,cn=users,dc=domain,dc=com`  |
+| `PASSWORDCOCKPIT_LDAP_PASSWORD`  | Password for LDAP  | `password`  |
+| `PASSWORDCOCKPIT_LDAP_BASEDN`  | Base DN  | `cn=users,dc=domain,dc=com`  |
+| `PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT`  | Filter for retrieving accounts  | `(&(memberOf=cn=group_name,cn=groups,dc=domain,dc=com)(uid=%s))`  |
+| `PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN`  | Bind requires DN, possible value: `true` or `false`  | `true`  |
+
+
+# Architecture and technologies
+
+<p align="center"><img src="architecture.svg" width="500"></p>
+The application itself follows the RESTful architecture.
+To make the deploy easier in production, the frontend and backend have been built and merged in a single docker image.
+
+## Frontend
+The frontend is maintained on [passwordcockpit/frontend](https://github.com/passwordcockpit/frontend).
+Frontend has been developed using [`Ember.js`](https://emberjs.com/) and [`Bootstrap`](https://getbootstrap.com/). <br>
+The PIN password encryption is made with [`Stanford Javascritp Crypto Library`](https://github.com/bitwiseshiftleft/sjcl), using AES-CCM.
+
+## Backend
+The backend is maintained on [passwordcockpit/backend](https://github.com/passwordcockpit/backend).
+The server side is based on PHP Standard Recommendation (PSR) uses [`Zend Expressive`](https://docs.zendframework.com/zend-expressive/) and [`Doctrine`](https://www.doctrine-project.org/).<br>
+HAL is used to give a consistent and easy way to hyperlink between resources.<br>
+Login information are stored using `Bcrypt`.<br>
+Password entitites and files are crypted with [`Zend\Crypt`](https://docs.zendframework.com/zend-crypt/), using sha-256.<br>
+User session are handled with [`JWT tokens`](https://jwt.io/), encrypted with HS256.<br>
+All listed encryptions are customizable with a custom key, adding cryptographic salt to hashes to mitigate rainbow tables.
+All API are documented with [`Swagger`](https://swagger.io/).
+
+## Database
 Database uses [`mysql`](https://www.mysql.com/).
 
 
-## Features
-One of the strong assets of Passwordcockpit is the folder sharing system, making it useful for enterprises.
+# Security
+To ensure the security to your Passwordcockpit instance:
+- Enable SSL (https) or put the service behind a reverseproxy with SSL.
+- Set your `PASSWORDCOCKPIT_BLOCK_CIPHER_KEY` and `PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY`.
+- Set your `PASSWORDCOCKPIT_ADMIN_PASSWORD`.
 
-The folder system works as follows:
-- Folders can contain passwords and other folders.
-- Each folder has a list of associated users and their permission (read/edit mode).
-- Users can be associated to a folder even if they do not have permission of parent folder.
 
-Users can be managed by admins with the following features:
-- Create new users.
-- Deactivate users.
-- Modify users information. Normal users have the ability to change information on themself.
+# Vulnerability
+If you have found a vulnerability in the project, please write privately to security@passwordcockpit.com. Thanks!
 
-Password can be created by users who have edit mode on the folder:
-- Password can be crypted by creator to hide it from admins.
-- Passwords also contains fields such as URL, description, username and much more.
-- Ability to associate a file to a password.
+
+# Contribute
+In this [`readme`](./develop/README.md) you can find the procedure to prepare the development environment.
 
 ## Screenshots
 
