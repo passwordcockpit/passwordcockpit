@@ -1,6 +1,7 @@
 <style>
 table {
   font-size: 0.8em
+  white-space: nowrap;
 }
 thead{
     background-color: #fefefe;
@@ -49,8 +50,8 @@ thead{
 # Usage
 Installation is done with `docker-compose`. Please check out the [official install instructions](https://docs.docker.com/compose/install/) for more information.<br>
 Passwordcockpit docker images are provided within [its Docker Hub organization](https://hub.docker.com/u/passwordcockpit).<br><br>
-To start, just copy [`docker-compose.yml`](./docker-compose.yml) to a folder and setup the configuration as shown in the "Available docker configurations" chapter. Finally run `docker-compose up` from terminal.<br><br>
-When the service is up, navigate to `PASSWORDCOCKPIT_BASEHOST` (e.g. `https://passwordcockpit.domain.com`) and login.<br><br>
+To start, just copy [`docker-compose.yml`](https://github.com/passwordcockpit/passwordcockpit/blob/master/docker-compose.yml) to a folder and setup the configuration as shown in the "Available docker configurations" chapter. Finally run `docker-compose up` from terminal.<br><br>
+When the service is up, navigate to `PASSWORDCOCKPIT_BASEHOST` (e.g. `https://passwordcockpit.com`) and login.<br><br>
 The default username is `admin`. The system generate the default password: `Admin123!`, this can be overridden by specifying the `PASSWORDCOCKPIT_ADMIN_PASSWORD` variable.
 
 
@@ -74,7 +75,7 @@ Users can be associated to a folder even if they do not have permission from the
 Authentication can be done with database stored password or LDAP.
 
 ## LDAP
-To use LDAP, users must exist in Passwordcockpit. The match of PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT is done with the username.
+To use LDAP, users must exist in Passwordcockpit. The match of `PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT` is done with the username.
 
 When LDAP is enabled it is no longer possible to modify the profile data, since they will be synchronized at each login.
 
@@ -88,11 +89,11 @@ There are 3 levels of encryption:
 A password can be crypted with a personal PIN in order to hide it from users with "Access to all directiories" permission and from users assigned to the same directory.
 
 # Available docker configurations
-| Container volume                       | Description                                                                                                                                                                                                                                                                                       |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/var/www/html/upload`                 | Contains passwords attached files. It is important to map for making data persistent.                                                                                                                                                                                                             |
-| `/etc/ssl/certs/passwordcockpit.crt`   | SSL certificate file for HTTPS, used to overwrite the self-signed auto generated file, e.g. `./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro`. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate**       |
-| `/etc/ssl/private/passwordcockpit.key` | SSL certificate key file for HTTPS, used to overwrite the self-signed auto generated file, e.g. `./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro`. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate** |
+| Container volume                       | Description                                                                                                                                                                                                                                                                                       | Example                              |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | - |
+| `/var/www/html/upload`                 | Contains passwords attached files. It is important to map for making data persistent.                                                                                                                                                                                                             | `./volumes/upload`                             |
+| `/etc/ssl/certs/passwordcockpit.crt`   | SSL certificate file for HTTPS, used to overwrite the self-signed auto generated file. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate**       | `./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro` |
+| `/etc/ssl/private/passwordcockpit.key` | SSL certificate key file for HTTPS, used to overwrite the self-signed auto generated file. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate** | `./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro` |
 
 | Environment variable                        | Description                                                                                                                                                                                                                                                                                                   | Example                              |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -102,27 +103,27 @@ A password can be crypted with a personal PIN in order to hide it from users wit
 | `PASSWORDCOCKPIT_DATABASE_DATABASE`         | Name of the database                                                                                                                                                                                                                                                                                          | `passwordcockpit`                    |
 | `PASSWORDCOCKPIT_BLOCK_CIPHER_KEY`          | Key for passwords and files encryption. **IMPORTANT: do not lose this key, without it you will not be able to decrypt passwords and files**                                                                                                                                                                   | `Q7EeZaHdMV7PMBGrNRre27MFXLEKqMAS`   |
 | `PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY` | Key for encrypting JSON Web Tokens                                                                                                                                                                                                                                                                            | `zfYKN7Z8XW8McgKaSD2uSNmQQ9dPmgTz`   |
-| `PASSWORDCOCKPIT_BASEHOST`                  | Base host of the Passwordcockpit service                                                                                                                                                                                                                                                                      | `https://passwordcockpit.domain.com` |
+| `PASSWORDCOCKPIT_BASEHOST`                  | Base host of the Passwordcockpit service                                                                                                                                                                                                                                                                      | `https://passwordcockpit.com` |
 | `PASSWORDCOCKPIT_SWAGGER`                   | Enable swagger documentation, possible values: `enable` or `disable`. If enabled, documentation can be seen here: `PASSWORDCOCKPIT_BASEHOST/swagger`                                                                                                                                                          | `enable`                             |
 | `PASSWORDCOCKPIT_SSL`                       | Enable SSL, possible values: `enable` or `disable`. If enabled the port 443 will be used, the system will generate a self-signed certificate that can be replaced with the one specified in the volumes configuration. If disabled the port 80 will be used. The two ports cannot be opened at the same time. | `enable`                             |
-| `PASSWORDCOCKPIT_ADMIN_PASSWORD`            | Admin password to log into passwordcockpit                                                                                                                                                                                                                                                                    | `username`                           |
+| `PASSWORDCOCKPIT_ADMIN_PASSWORD`            | Admin password to log into passwordcockpit                                                                                                                                                                                                                                                                    | `Password123!`                           |
 | `PASSWORDCOCKPIT_AUTHENTICATION_TYPE`       | Type of the authentication, possible values: `ldap` or `password`                                                                                                                                                                                                                                             | `password`                           |
 
 | LDAP variables (only necessary if LDAP is enabled) | Description                                                | Example                                                          |
 | -------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- |
 | `PASSWORDCOCKPIT_LDAP_HOST`                        | Hostname of the LDAP server                                | `ldap`                                                           |
 | `PASSWORDCOCKPIT_LDAP_PORT`                        | Port of the LDAP server                                    | `389`                                                            |
-| `PASSWORDCOCKPIT_LDAP_USERNAME`                    | Username for LDAP                                          | `uid=name,cn=users,dc=domain,dc=com`                             |
+| `PASSWORDCOCKPIT_LDAP_USERNAME`                    | Username for LDAP                                          | `uid=name,cn=users,dc=passwordcockpit,dc=com`                             |
 | `PASSWORDCOCKPIT_LDAP_PASSWORD`                    | Password for LDAP                                          | `password`                                                       |
-| `PASSWORDCOCKPIT_LDAP_BASEDN`                      | Base DN                                                    | `cn=users,dc=domain,dc=com`                                      |
-| `PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT`         | Filter to retrieve accounts                                | `(&(memberOf=cn=group_name,cn=groups,dc=domain,dc=com)(uid=%s))` |
+| `PASSWORDCOCKPIT_LDAP_BASEDN`                      | Base DN                                                    | `cn=users,dc=passwordcockpit,dc=com`                                      |
+| `PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT`         | Filter to retrieve accounts, it match the `username`                              | `(&(memberOf=cn=group_name,cn=groups,dc=passwordcockpit,dc=com)(uid=%s))` |
 | `PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN`              | Bind if DN is required, possible values: `true` or `false` | `true`                                                           |
 
 
 # Architecture and technologies
 
-<p align="center"><img src="architecture.svg" width="500"></p>
-The application itself follows the RESTful architecture.
+<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/architecture.svg" width="500"></p>
+The application itself follows the RESTful architecture.<br>
 To ease deployment into production, frontend and backend have been built and merged in a single docker image.
 
 ## Frontend
@@ -131,7 +132,7 @@ Frontend has been developed using [`Ember.js`](https://emberjs.com/) and [`Boots
 The PIN password encryption is made with [`Stanford Javascritp Crypto Library`](https://github.com/bitwiseshiftleft/sjcl), using AES-CCM.
 
 ## Backend
-The backend is maintained on [passwordcockpit/backend](https://github.com/passwordcockpit/backend).
+The backend is maintained on [passwordcockpit/backend](https://github.com/passwordcockpit/backend).<br>
 The server side application logic is based on PHP Standard Recommendation (PSR) using [`Zend Expressive`](https://docs.zendframework.com/zend-expressive/) and [`Doctrine`](https://www.doctrine-project.org/).<br>
 HAL is used as a JSON specification to give a consistent and easy way to hyperlink between resources.<br>
 Login information are stored using `Bcrypt`.<br>
@@ -154,25 +155,17 @@ To ensure the security to your Passwordcockpit instance:
 If you find any vulnerability within the project, you are welcome to drop us a private message to: security@passwordcockpit.com. Thanks!
 
 # Contribute
-[`Here`](./develop/README.md) you can find the steps to prepare the development environment.
+[`Here`](https://github.com/passwordcockpit/passwordcockpit/blob/master/develop/README.md) you can find the steps to prepare the development environment.
 
-## Screenshots
+# Screenshots
+## Passwords manager
+<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/passwordcockpit-screenshot-1.jpg" width="600"></p>
 
-### Login page
+## Users manager
+<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/passwordcockpit-screenshot-2.jpg" width="600"></p>
 
-### /folders
-
-### /folders/1
-
-### /folders/1/password/1
-
-### /manage-profile
-
-### /users
-
-### /users/1
-
-
+## Mobile design
+<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/passwordcockpit-screenshot-3.jpg" width="300"></p>
 
 
 
