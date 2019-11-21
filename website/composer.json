@@ -1,0 +1,7 @@
+{
+    "name": "passwordcockpit/website",
+    "type": "project",
+    "require": {
+        "erusev/parsedown": "^1.7"
+    }
+}
