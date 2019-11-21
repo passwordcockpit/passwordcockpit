@@ -46,7 +46,7 @@ RUN composer swagger
 ##############################################
 
 FROM node:8-alpine as frontend_artifacts
-ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.0.0
+ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.0.1
 RUN apk add git
 WORKDIR /usr/src/app
 
