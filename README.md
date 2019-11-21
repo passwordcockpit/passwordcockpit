@@ -1,7 +1,7 @@
 <style>
 table {
-  font-size: 0.8em
-  white-space: nowrap;
+  font-size: 0.8em;
+  word-break: break-all;
 }
 thead{
     background-color: #fefefe;
