@@ -144,6 +144,7 @@ To ensure the security to your Passwordcockpit instance:
 - Enable SSL (https) or put the service behind a reverseproxy with SSL.
 - Set your `PASSWORDCOCKPIT_BLOCK_CIPHER_KEY` and `PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY`.
 - Set your `PASSWORDCOCKPIT_ADMIN_PASSWORD`.
+- Disable Swagger.
 
 
 # Vulnerabilities
