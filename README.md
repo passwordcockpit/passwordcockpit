@@ -3,8 +3,8 @@
 <p align="center">Passwordcockpit is a simple, free, open source, self hosted, web based password manager for teams. It is made in PHP, Javascript, MySQL and it run on a docker service. It allows users with any kind of device to safely store, share and retrieve passwords, certificates, files and much more.</p>
 
 <p align="center">
-    <img alt="GitHub License" src="https://img.shields.io/github/license/passwordcockpit/passwordcockpit">
-    <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/passwordcockpit/passwordcockpit">
+    <img alt="GitHub license" src="https://img.shields.io/github/license/passwordcockpit/passwordcockpit">
+    <img alt="GitHub last release" src="https://img.shields.io/github/v/release/passwordcockpit/passwordcockpit?sort=semver">
     <img alt="Docker pulls" src="https://img.shields.io/docker/pulls/passwordcockpit/passwordcockpit">
 </p>
 
@@ -117,7 +117,7 @@ Password cockpit is translated into:
 
 # Architecture and technologies
 
-<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/architecture.svg" width="500"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/architecture.svg?sanitize=true" width="500"></p>
 The application itself follows the RESTful architecture.<br>
 To ease deployment into production, frontend and backend have been built and merged in a single docker image.
 
