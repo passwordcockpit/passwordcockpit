@@ -1,0 +1,45 @@
+version: "3.5"
+services:
+    passwordcockpit:
+        image: passwordcockpit/passwordcockpit:1.0.0-php-7.3-apache
+        container_name: passwordcockpit
+        ports:
+            # Use with PASSWORDCOCKPIT_SSL: disable
+            #- "8080:80"
+            # Use with PASSWORDCOCKPIT_SSL: enable
+            - "4343:443"
+        volumes:
+            - ./volumes/upload:/var/www/html/upload
+            # Overwrite self-signed SSL certificate file
+            #- ./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro
+            #- ./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro
+        environment:
+            PASSWORDCOCKPIT_DATABASE_USERNAME: passwordcockpit_db_usr
+            PASSWORDCOCKPIT_DATABASE_PASSWORD: password
+            PASSWORDCOCKPIT_DATABASE_HOSTNAME: mysql
+            PASSWORDCOCKPIT_DATABASE_DATABASE: passwordcockpit
+            PASSWORDCOCKPIT_BLOCK_CIPHER_KEY: supersecretkey
+            PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY: authenticationsecretkey
+            # Use with PASSWORDCOCKPIT_SSL: disable
+            #PASSWORDCOCKPIT_BASEHOST: http://localhost:8080
+            # Use with PASSWORDCOCKPIT_SSL: enable
+            PASSWORDCOCKPIT_BASEHOST: https://localhost:4343
+            PASSWORDCOCKPIT_AUTHENTICATION_TYPE: password
+            PASSWORDCOCKPIT_SWAGGER: enable
+            PASSWORDCOCKPIT_SSL: enable
+            #PASSWORDCOCKPIT_ADMIN_PASSWORD: Password123!
+        depends_on:
+            - mysql
+    mysql:
+        image: mysql:5.7
+        container_name: mysql
+        ports:
+            - '3306:3306'
+        volumes:
+            - ./volumes/mysql:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=root_password
+            - MYSQL_USER=passwordcockpit_db_usr
+            - MYSQL_PASSWORD=password
+            - MYSQL_DATABASE=passwordcockpit
+        command: --character-set-server=utf8 --collation-server=utf8_unicode_ci
