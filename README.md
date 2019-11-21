@@ -1,13 +1,3 @@
-<style>
-table {
-  font-size: 0.8em;
-  word-break: break-all;
-}
-thead{
-    background-color: #fefefe;
-}
-</style>
-
 <p align="center" style="padding-top:30px"><img src="https://raw.githubusercontent.com/passwordcockpit/frontend/master/public/assets/images/logo.svg?sanitize=true" width="400"></p>
 
 <p align="center">Passwordcockpit is a simple, free, open source, self hosted, web based password manager for teams. It is made in PHP, Javascript, MySQL and it run on a docker service. It allows users with any kind of device to safely store, share and retrieve passwords, certificates, files and much more.</p>
