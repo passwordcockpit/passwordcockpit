@@ -28,13 +28,9 @@
 - [Vulnerabilities](#vulnerabilities)
 - [Contribute](#contribute)
   - [Screenshots](#screenshots)
-    - [Login page](#login-page)
-    - [/folders](#folders)
-    - [/folders/1](#folders1)
-    - [/folders/1/password/1](#folders1password1)
-    - [/manage-profile](#manage-profile)
-    - [/users](#users)
-    - [/users/1](#users1)
+    - [Passwords manager](#passwords-manager)
+    - [Users manager](#users-manager)
+    - [Mobile design](#mobile-design)
 
 
 # Usage
