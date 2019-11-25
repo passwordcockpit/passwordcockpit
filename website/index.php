@@ -3,15 +3,24 @@
 	<head>
 		<title>Passwordcockpit</title>
 		<link rel="stylesheet" href="style.css">
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-18590515-33"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'UA-18590515-33');
+		</script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script>
+		$(function(){
+			$.each($("h1,h2"),function(){
+				$(this).attr('id', $(this).text().toLowerCase().replace(/ /g, "-"));
+			});
+		})
+		</script>
 	</head>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script>
-	$(function(){
-		$.each($("h1,h2"),function(){
-			$(this).attr('id', $(this).text().toLowerCase().replace(/ /g, "-"));
-		});
-	})
-	</script>
 <body>
 
 <header>
