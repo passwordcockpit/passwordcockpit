@@ -103,7 +103,7 @@ A password can be crypted with a personal PIN in order to hide it from users wit
 | `PASSWORDCOCKPIT_LDAP_PASSWORD`                    | Password for LDAP                                          | `password`                                                       |
 | `PASSWORDCOCKPIT_LDAP_BASEDN`                      | Base DN                                                    | `cn=users,dc=passwordcockpit,dc=com`                                      |
 | `PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT`         | Filter to retrieve accounts, it match the `username`                              | `(&(memberOf=cn=group_name,cn=groups,dc=passwordcockpit,dc=com)(uid=%s))` |
-| `PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN`              | Bind if DN is required, possible values: `true` or `false` | `true`                                                           |
+| `PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN`              | Bind if DN is required, possible values: `'true'` or `'false'` | `'true'`                                                           |
 
 # Available translations
 Password cockpit is translated into:
