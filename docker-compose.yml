@@ -1,7 +1,7 @@
 version: "3.5"
 services:
     passwordcockpit:
-        image: passwordcockpit/passwordcockpit:1.0.2-php-7.3-apache
+        image: passwordcockpit/passwordcockpit:1.0.3-php-7.3-apache
         container_name: passwordcockpit
         ports:
             # Use with PASSWORDCOCKPIT_SSL: disable
@@ -13,6 +13,10 @@ services:
             # Overwrite self-signed SSL certificate file
             #- ./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro
             #- ./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro
+            # User and group same as host when use APACHE_RUN_USER and APACHE_RUN_GROUP
+            #- /etc/group:/etc/group:ro
+            #- /etc/passwd:/etc/passwd:ro
+            #- /etc/shadow:/etc/shadow:ro
         environment:
             PASSWORDCOCKPIT_DATABASE_USERNAME: passwordcockpit_db_usr
             PASSWORDCOCKPIT_DATABASE_PASSWORD: password
@@ -28,8 +32,8 @@ services:
             PASSWORDCOCKPIT_SWAGGER: enable
             PASSWORDCOCKPIT_SSL: enable
             #PASSWORDCOCKPIT_ADMIN_PASSWORD: Password123!
-            #APACHE_RUN_USER: docker
-            #APACHE_RUN_GROUP: docker
+            #APACHE_RUN_USER: 1000
+            #APACHE_RUN_GROUP: 1000
         depends_on:
             - mysql
     mysql:

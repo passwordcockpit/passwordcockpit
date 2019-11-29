@@ -94,8 +94,8 @@ A password can be crypted with a personal PIN in order to hide it from users wit
 | `PASSWORDCOCKPIT_SSL`                       | Enable SSL, possible values: `enable` or `disable`. If enabled the port 443 will be used, the system will generate a self-signed certificate that can be replaced with the one specified in the volumes configuration. If disabled the port 80 will be used. The two ports cannot be opened at the same time. | `enable`                             |
 | `PASSWORDCOCKPIT_ADMIN_PASSWORD`            | Admin password to log into passwordcockpit                                                                                                                                                                                                                                                                    | `Password123!`                           |
 | `PASSWORDCOCKPIT_AUTHENTICATION_TYPE`       | Type of the authentication, possible values: `ldap` or `password`                                                                                                                                                                                                                                             | `password`                           |
-| `APACHE_RUN_USER` | For running the Apache variants as an arbitrary user. Use the user name and not the UID. | `docker` |
-| `APACHE_RUN_GROUP` | For running the Apache variants as an arbitrary group. Use the group name and not the GID. | `docker` |
+| `APACHE_RUN_USER` | For running the Apache variants as an arbitrary user. | `1000` |
+| `APACHE_RUN_GROUP` | For running the Apache variants as an arbitrary group. | `1000` |
 
 | LDAP variables (only necessary if LDAP is enabled) | Description                                                | Example                                                          |
 | -------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- |
