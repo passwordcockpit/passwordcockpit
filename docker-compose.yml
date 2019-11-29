@@ -1,7 +1,7 @@
 version: "3.5"
 services:
     passwordcockpit:
-        image: passwordcockpit/passwordcockpit:1.0.1-php-7.3-apache
+        image: passwordcockpit/passwordcockpit:1.0.2-php-7.3-apache
         container_name: passwordcockpit
         ports:
             # Use with PASSWORDCOCKPIT_SSL: disable
@@ -28,6 +28,8 @@ services:
             PASSWORDCOCKPIT_SWAGGER: enable
             PASSWORDCOCKPIT_SSL: enable
             #PASSWORDCOCKPIT_ADMIN_PASSWORD: Password123!
+            #APACHE_RUN_USER: docker
+            #APACHE_RUN_GROUP: docker
         depends_on:
             - mysql
     mysql:
