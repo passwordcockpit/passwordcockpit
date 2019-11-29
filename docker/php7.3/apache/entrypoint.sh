@@ -139,9 +139,29 @@ fi
 echo -e "\e[32mSSL ok\e[0m"
 
 ##############################################
+# User and group same as host
+##############################################
+echo -e "\e[32mUser and group same as host\e[0m"
+if [ "${APACHE_RUN_GROUP}" != "" ]; then
+    groupadd ${APACHE_RUN_GROUP} -g 1000
+	echo -e "\e[32mCustom group created\e[0m"
+    if [ "${APACHE_RUN_USER}" == "" ]; then
+        usermod -g 1000 www-data
+        echo -e "\e[32mAssigned the group to www-data\e[0m"
+    fi
+elif [ "${APACHE_RUN_USER}" != "" ]; then
+    groupadd ${APACHE_RUN_USER} -g 1000
+    echo -e "\e[32mDefault group created\e[0m"
+fi
+if [ "${APACHE_RUN_USER}" != "" ]; then
+    adduser ${APACHE_RUN_USER} -uid 1000 -gid 1000 --no-create-home --disabled-password --gecos ""
+	echo -e "\e[32mUser created\e[0m"
+fi
+
+##############################################
 # Database
 ##############################################
-echo -e "\e[31Check database connection\e[0m"
+echo -e "\e[32mCheck database connection\e[0m"
 max_retries=10
 try=0
 
