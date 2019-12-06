@@ -64,7 +64,7 @@ require "vendor/autoload.php";
 
 $Parsedown = new Parsedown();
 
-echo $Parsedown->text(file_get_contents("https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/1.0.0-dev/README.md"));
+echo $Parsedown->text(file_get_contents("https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/README.md"));
 
 ?>
 
