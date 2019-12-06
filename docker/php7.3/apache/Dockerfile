@@ -3,7 +3,7 @@
 ##############################################
 
 FROM php:7.3-apache as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=1.0.0
+ARG PASSWORDCOCKPIT_BACKEND_TAG=1.1.0
 RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends git
@@ -46,7 +46,7 @@ RUN composer swagger
 ##############################################
 
 FROM node:8-alpine as frontend_artifacts
-ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.0.1
+ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.1.0
 RUN apk add git
 WORKDIR /usr/src/app
 
