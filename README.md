@@ -111,6 +111,8 @@ A password can be crypted with a personal PIN in order to hide it from users wit
 Password cockpit is translated into:
 - English
 - Italiano
+- Français
+- Deutsch
 
 
 # Architecture and technologies
