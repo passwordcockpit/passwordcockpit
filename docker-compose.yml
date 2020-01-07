@@ -10,7 +10,6 @@ services:
             - "4343:443"
         volumes:
             - ./volumes/upload:/var/www/html/upload
-            - ./website:/var/www/html/public/website
             # Overwrite self-signed SSL certificate file
             #- ./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro
             #- ./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro
