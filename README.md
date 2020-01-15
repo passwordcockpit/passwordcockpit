@@ -1,4 +1,4 @@
-<p align="center" style="padding-top:30px"><img src="https://raw.githubusercontent.com/passwordcockpit/frontend/master/public/assets/images/logo.svg?sanitize=true" width="400"></p>
+<p align="center" style="padding-top:30px"><img src="https://raw.githubusercontent.com/passwordcockpit/frontend/master/public/assets/images/logo.svg?sanitize=true" width="400" alt="Passwordcockpit logo"></p>
 
 <p align="center">Passwordcockpit is a simple, free, open source, self hosted, web based password manager for teams. It is made in PHP, Javascript, MySQL and it run on a docker service. It allows users with any kind of device to safely store, share and retrieve passwords, certificates, files and much more.</p>
 
@@ -117,7 +117,7 @@ Password cockpit is translated into:
 
 # Architecture and technologies
 
-<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/architecture.svg?sanitize=true" width="500"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/architecture.svg?sanitize=true" width="500" alt="RESTful architecture diagram"></p>
 The application itself follows the RESTful architecture.<br>
 To ease deployment into production, frontend and backend have been built and merged in a single docker image.
 
@@ -155,13 +155,13 @@ If you find any vulnerability within the project, you are welcome to drop us a p
 
 # Screenshots
 ## Passwords manager
-<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/passwordcockpit-screenshot-1.jpg" width="600"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/passwordcockpit-screenshot-1.jpg" width="600" alt="Password manager screenshot "></p>
 
 ## Users manager
-<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/passwordcockpit-screenshot-2.jpg" width="600"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/passwordcockpit-screenshot-2.jpg" width="600" alt="User manager screenshot"></p>
 
 ## Mobile design
-<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/passwordcockpit-screenshot-3.jpg" width="300"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/passwordcockpit-screenshot-3.jpg" width="300" alt="Mobile design screenshot"></p>
 
 
 

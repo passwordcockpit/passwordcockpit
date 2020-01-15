@@ -14,13 +14,13 @@ pre {
 
 a,
 a:visited {
-    color: #3498db;
+    color: #1c5f8c;
 }
 
 a:hover,
 a:focus,
 a:active {
-    color: #2980b9;
+    color: #1c5f8c;
 }
 
 .modest-no-decoration {
@@ -132,7 +132,7 @@ blockquote {
 
 pre,
 code {
-    background-color: #eee;
+    background-color: #fde5bf;
 }
 
 header{
@@ -161,15 +161,31 @@ table{
 th{
     text-align: left;
     padding: 2px 5px;
-    background-color: #eee;
+    background-color: rgb(177, 177, 177);
 }
 
 td{
+    width: 25%;
     text-align: left;
     padding: 2px 5px 2px 0;
 }
 
 td:last-child{
-	word-break: break-all;
-	min-width: 15rem;
+    width: 35%;
 }
+td:first-child{
+    width: 35%;
+}
+
+tr:nth-child(even){ 
+    background-color: #f2f2f2 
+  }
+code{ 
+    word-break: break-word;
+}
+@media only screen and (max-width: 600px) {
+    p,
+.modest-p {
+    font-size: 1.3rem;
+}
+  }
