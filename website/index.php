@@ -3,7 +3,7 @@
 	<head>
 		<title>Passwordcockpit</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="description" content="Passwordcockpit is a simple, free, open source, self hosted, web based password manager for teams.">
+		<meta name="description" content="Passwordcockpit is a simple, free, open source, self hosted, web based password manager for teams">
 		<meta name="author" content="Passwordcockpit">
 		<link rel="stylesheet" href="style.css">
 		<!-- Global site tag (gtag.js) - Google Analytics -->
