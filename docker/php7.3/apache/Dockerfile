@@ -3,7 +3,7 @@
 ##############################################
 
 FROM php:7.3-apache as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=1.1.0
+ARG PASSWORDCOCKPIT_BACKEND_TAG=1.2.0
 RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends git
