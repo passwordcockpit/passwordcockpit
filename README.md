@@ -128,10 +128,10 @@ The PIN password encryption is made with [`Stanford Javascritp Crypto Library`](
 
 ## Backend
 The backend is maintained on [passwordcockpit/backend](https://github.com/passwordcockpit/backend).<br>
-The server side application logic is based on PHP Standard Recommendation (PSR) using [`Zend Expressive`](https://docs.zendframework.com/zend-expressive/) and [`Doctrine`](https://www.doctrine-project.org/).<br>
+The server side application logic is based on PHP Standard Recommendation (PSR) using [`Mezzio`](https://docs.mezzio.dev/mezzio/), [`Laminas Components`](https://docs.laminas.dev/components/) and [`Doctrine`](https://www.doctrine-project.org/).<br>
 HAL is used as a JSON specification to give a consistent and easy way to hyperlink between resources.<br>
 Login information are stored using `Bcrypt`.<br>
-Password entitites and files are crypted with [`Zend\Crypt`](https://docs.zendframework.com/zend-crypt/), using sha-256.<br>
+Password entitites and files are crypted with [`laminas-crypt`](https://docs.laminas.dev/laminas-crypt/), using sha-256.<br>
 User sessions are handled with [`JWT tokens`](https://jwt.io/), encrypted with HS256.<br>
 All listed encryptions are customizable with a custom key, adding cryptographic salt to hashes to mitigate rainbow tables.<br>
 All API are documented with [`Swagger`](https://swagger.io/).
