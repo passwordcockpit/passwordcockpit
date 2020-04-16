@@ -117,7 +117,8 @@ echo -e "\e[32mFrontend files updated\e[0m"
 ##############################################
 echo -e "\e[32mStart swagger part\e[0m"
 if [ "${PASSWORDCOCKPIT_SWAGGER}" == "enable" ]; then
-	sed -ri -e 's!PASSWORDCOCKPIT_BASEHOST!'${PASSWORDCOCKPIT_BASEHOST}'!g' swagger/swagger.json
+    PASSWORDCOCKPIT_SWAGGERBASEHOST=$(echo ${PASSWORDCOCKPIT_BASEHOST} |sed 's/https\?:\/\///')
+	sed -ri -e "s!PASSWORDCOCKPIT_BASEHOST!$PASSWORDCOCKPIT_SWAGGERBASEHOST!g" swagger/swagger.json
 	mv swagger public/swagger
 else
 	rm -rf swagger
