@@ -50,7 +50,7 @@ RUN composer swagger
 ##############################################
 
 FROM node:10-alpine as frontend_artifacts
-ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.1.0
+ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.1.1
 RUN apk add git
 WORKDIR /usr/src/app
 
@@ -67,7 +67,7 @@ RUN { \
 } > config/local.js
 
 # install and build
-RUN npm install -g ember-cli@v3.17.0
+RUN npm install -g ember-cli
 RUN npm install
 RUN ember build -p
 
