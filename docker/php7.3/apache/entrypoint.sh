@@ -4,101 +4,18 @@
 # Configuration files
 ##############################################
 echo -e "\e[32mStart creating configuration files\e[0m"
-filename=config/autoload/db.local.php
-if [ ! -e $filename ]; then
-	{
-		echo "<?php"
-		echo "return ["
-		echo "    'dbadapter' => ["
-		echo "        'username' => '${PASSWORDCOCKPIT_DATABASE_USERNAME}',"
-		echo "        'password' => '${PASSWORDCOCKPIT_DATABASE_PASSWORD}'," 
-		echo "        'hostname' => '${PASSWORDCOCKPIT_DATABASE_HOSTNAME}',"
-		echo "        'database' => '${PASSWORDCOCKPIT_DATABASE_DATABASE}'"
-		echo "    ]"
-		echo "];"
-	} >> $filename
-fi
 
-filename=config/autoload/doctrine.local.php
-if [ ! -e $filename ]; then
-	{
-		echo "<?php"
-		echo "return ["
-		echo "    'doctrine' => ["
-		echo "        'connection' => ["
-		echo "            'orm_default' => [" 
-		echo "                'params' => ["
-		echo "                    'url' =>"
-		echo "                        'mysql://${PASSWORDCOCKPIT_DATABASE_USERNAME}:${PASSWORDCOCKPIT_DATABASE_PASSWORD}@${PASSWORDCOCKPIT_DATABASE_HOSTNAME}/${PASSWORDCOCKPIT_DATABASE_DATABASE}'"
-		echo "                ]"
-		echo "            ]"
-		echo "        ]"
-		echo "    ]"
-		echo "];"
-	} >> $filename
-fi
-
-filename=config/autoload/crypt.local.php
-if [ ! -e $filename ]; then
-	{
-		echo "<?php"
-		echo "return ["
-		echo "    'block_cipher' => ["
-		echo "        'key' => '${PASSWORDCOCKPIT_BLOCK_CIPHER_KEY}'"
-		echo "    ]" 
-		echo "];"
-	} >> $filename
-fi
+mv config/autoload/db.local.php.dist config/autoload/db.local.php
+mv config/autoload/client.local.php.dist config/autoload/client.local.php
+mv config/autoload/doctrine.local.php.dist config/autoload/doctrine.local.php
+mv config/autoload/crypt.local.php.dist config/autoload/crypt.local.php
+mv config/autoload/authentication.local.php.dist config/autoload/authentication.local.php
 
 if [ "${PASSWORDCOCKPIT_AUTHENTICATION_TYPE}" == "ldap" ]; then
-	filename=config/autoload/authentication.local.php
-	if [ ! -e $filename ]; then
-		{
-			echo "<?php"
-			echo "return ["
-			echo "    'authentication' => ["
-			echo "        'secret_key' => '${PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY}'"
-			echo "    ]," 
-			echo "    'dependencies' => ["
-			echo "        'factories' => ["
-			echo "            Zend\Authentication\Adapter\AdapterInterface::class =>"
-			echo "                Authentication\Api\V1\Factory\Adapter\LdapAdapterFactory::class"
-			echo "        ]"
-			echo "    ]"
-			echo "];"
-		} >> $filename
-	fi
-
-	filename=config/autoload/ldap.local.php
-	if [ ! -e $filename ]; then
-		{
-			echo "<?php"
-			echo "return ["
-			echo "    'ldap' => [["
-			echo "        'host' => '${PASSWORDCOCKPIT_LDAP_HOST}',"
-			echo "        'port' => ${PASSWORDCOCKPIT_LDAP_PORT},"
-			echo "        'username' => '${PASSWORDCOCKPIT_LDAP_USERNAME}',"
-			echo "        'password' => '${PASSWORDCOCKPIT_LDAP_PASSWORD}',"
-			echo "        'baseDn' => '${PASSWORDCOCKPIT_LDAP_BASEDN}',"
-			echo "        'accountFilterFormat' => '${PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT}',"
-			echo "        'bindRequiresDn' => ${PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN}"
-			echo "    ]]" 
-			echo "];"
-		} >> $filename
-	fi
-elif [ "${PASSWORDCOCKPIT_AUTHENTICATION_TYPE}" == "password" ]; then
-	filename=config/autoload/authentication.local.php
-	if [ ! -e $filename ]; then
-		{
-			echo "<?php"
-			echo "return ["
-			echo "    'authentication' => ["
-			echo "        'secret_key' => '${PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY}'"
-			echo "    ]" 
-			echo "];"
-		} >> $filename
-	fi
+    mv config/autoload/ldap.local.php.dist config/autoload/ldap.local.php
 fi
+
+mv config/constants.local.php.dist config/constants.local.php
 
 echo -e "\e[32mConfiguration files created\e[0m"
 
