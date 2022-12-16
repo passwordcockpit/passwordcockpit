@@ -34,6 +34,11 @@ services:
             #PASSWORDCOCKPIT_ADMIN_PASSWORD: Password123!
             #APACHE_RUN_USER: 1000
             #APACHE_RUN_GROUP: 1000
+            PASSWORDCOCKPIT_LDAP_USER_ATTR_UNIQUE_IDENTIFIER: ''
+            PASSWORDCOCKPIT_LDAP_USER_ATTR_NAME: ''
+            PASSWORDCOCKPIT_LDAP_USER_ATTR_SURNAME: ''
+            PASSWORDCOCKPIT_LDAP_USER_ATTR_MAIL: ''
+            PASSWORDCOCKPIT_LDAP_USER_ATTR_PHONE: ''
         depends_on:
             - mysql
     mysql:
