@@ -108,6 +108,11 @@ A password can be crypted with a personal PIN in order to hide it from users wit
 | `PASSWORDCOCKPIT_LDAP_BASEDN`                      | Base DN                                                    | `cn=users,dc=passwordcockpit,dc=com`                                      |
 | `PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT`         | Filter to retrieve accounts, it match the `username`                              | `(&(memberOf=cn=group_name,cn=groups,dc=passwordcockpit,dc=com)(uid=%s))` |
 | `PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN`              | Bind if DN is required, possible values: `'true'` or `'false'` | `'true'`                                                           |
+| `PASSWORDCOCKPIT_LDAP_USER_ATTR_UNIQUE_IDENTIFIER`              | Configure user identifier attribute, default value: `'uid'` |`'uid'`                                                           |
+| `PASSWORDCOCKPIT_LDAP_USER_ATTR_NAME`              | Configure name of user attribute, default value: `'givenname'` |`'givenname'`                                                           |
+| `PASSWORDCOCKPIT_LDAP_USER_ATTR_SURNAME`              | Configure surname of user attribute, default value: `'sn'` |`'sn'`                                                           |
+| `PASSWORDCOCKPIT_LDAP_USER_ATTR_MAIL`              | Configure  mail's user identifier attribute, default value: `'mail'` |`'mail'`                                                           |
+| `PASSWORDCOCKPIT_LDAP_USER_ATTR_PHONE`              | Configure phone's user attribute, default value: `null` |                                                         |
 
 # Available translations
 Password cockpit is translated into:
