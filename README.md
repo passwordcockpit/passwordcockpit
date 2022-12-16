@@ -98,6 +98,8 @@ A password can be crypted with a personal PIN in order to hide it from users wit
 | `PASSWORDCOCKPIT_AUTHENTICATION_TYPE`       | Type of the authentication, possible values: `ldap` or `password`                                                                                                                                                                                                                                             | `password`                           |
 | `APACHE_RUN_USER` | For running the Apache variants as an arbitrary user. | `1000` |
 | `APACHE_RUN_GROUP` | For running the Apache variants as an arbitrary group. | `1000` |
+| `PASSWORDCOCKPIT_UPLOAD_ACCEPTED_MIMETYPES` | Specify accepted mime types to check when uploading a file | `pdf, zip, doc` |
+
 
 | LDAP variables (only necessary if LDAP is enabled) | Description                                                | Example                                                          |
 | -------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- |
