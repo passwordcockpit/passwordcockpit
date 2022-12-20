@@ -4,18 +4,101 @@
 # Configuration files
 ##############################################
 echo -e "\e[32mStart creating configuration files\e[0m"
-
-mv config/autoload/db.local.php.dist config/autoload/db.local.php
-mv config/autoload/client.local.php.dist config/autoload/client.local.php
-mv config/autoload/doctrine.local.php.dist config/autoload/doctrine.local.php
-mv config/autoload/crypt.local.php.dist config/autoload/crypt.local.php
-mv config/autoload/authentication.local.php.dist config/autoload/authentication.local.php
-
-if [ "${PASSWORDCOCKPIT_AUTHENTICATION_TYPE}" == "ldap" ]; then
-    mv config/autoload/ldap.local.php.dist config/autoload/ldap.local.php
+filename=config/autoload/db.local.php
+if [ ! -e $filename ]; then
+	{
+		echo "<?php"
+		echo "return ["
+		echo "    'dbadapter' => ["
+		echo "        'username' => '${PASSWORDCOCKPIT_DATABASE_USERNAME}',"
+		echo "        'password' => '${PASSWORDCOCKPIT_DATABASE_PASSWORD}'," 
+		echo "        'hostname' => '${PASSWORDCOCKPIT_DATABASE_HOSTNAME}',"
+		echo "        'database' => '${PASSWORDCOCKPIT_DATABASE_DATABASE}'"
+		echo "    ]"
+		echo "];"
+	} >> $filename
 fi
 
-mv config/constants.local.php.dist config/constants.local.php
+filename=config/autoload/doctrine.local.php
+if [ ! -e $filename ]; then
+	{
+		echo "<?php"
+		echo "return ["
+		echo "    'doctrine' => ["
+		echo "        'connection' => ["
+		echo "            'orm_default' => [" 
+		echo "                'params' => ["
+		echo "                    'url' =>"
+		echo "                        'mysql://${PASSWORDCOCKPIT_DATABASE_USERNAME}:${PASSWORDCOCKPIT_DATABASE_PASSWORD}@${PASSWORDCOCKPIT_DATABASE_HOSTNAME}/${PASSWORDCOCKPIT_DATABASE_DATABASE}'"
+		echo "                ]"
+		echo "            ]"
+		echo "        ]"
+		echo "    ]"
+		echo "];"
+	} >> $filename
+fi
+
+filename=config/autoload/crypt.local.php
+if [ ! -e $filename ]; then
+	{
+		echo "<?php"
+		echo "return ["
+		echo "    'block_cipher' => ["
+		echo "        'key' => '${PASSWORDCOCKPIT_BLOCK_CIPHER_KEY}'"
+		echo "    ]" 
+		echo "];"
+	} >> $filename
+fi
+
+if [ "${PASSWORDCOCKPIT_AUTHENTICATION_TYPE}" == "ldap" ]; then
+	filename=config/autoload/authentication.local.php
+	if [ ! -e $filename ]; then
+		{
+			echo "<?php"
+			echo "return ["
+			echo "    'authentication' => ["
+			echo "        'secret_key' => '${PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY}'"
+			echo "    ]," 
+			echo "    'dependencies' => ["
+			echo "        'factories' => ["
+			echo "            Zend\Authentication\Adapter\AdapterInterface::class =>"
+			echo "                Authentication\Api\V1\Factory\Adapter\LdapAdapterFactory::class"
+			echo "        ]"
+			echo "    ]"
+			echo "];"
+		} >> $filename
+	fi
+
+	filename=config/autoload/ldap.local.php
+	if [ ! -e $filename ]; then
+		{
+			echo "<?php"
+			echo "return ["
+			echo "    'ldap' => [["
+			echo "        'host' => '${PASSWORDCOCKPIT_LDAP_HOST}',"
+			echo "        'port' => ${PASSWORDCOCKPIT_LDAP_PORT},"
+			echo "        'username' => '${PASSWORDCOCKPIT_LDAP_USERNAME}',"
+			echo "        'password' => '${PASSWORDCOCKPIT_LDAP_PASSWORD}',"
+			echo "        'baseDn' => '${PASSWORDCOCKPIT_LDAP_BASEDN}',"
+			echo "        'accountFilterFormat' => '${PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT}',"
+			echo "        'bindRequiresDn' => ${PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN}"
+			echo "    ]]" 
+			echo "];"
+		} >> $filename
+	fi
+elif [ "${PASSWORDCOCKPIT_AUTHENTICATION_TYPE}" == "password" ]; then
+	filename=config/autoload/authentication.local.php
+	if [ ! -e $filename ]; then
+		{
+			echo "<?php"
+			echo "return ["
+			echo "    'authentication' => ["
+			echo "        'secret_key' => '${PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY}'"
+			echo "    ]" 
+			echo "];"
+		} >> $filename
+	fi
+fi
 
 echo -e "\e[32mConfiguration files created\e[0m"
 
@@ -75,19 +158,20 @@ do
 		sleep 3s
 		continue
 	fi
-	schema_exist=$(echo $connection | grep array | awk -F"[()]" '{print $2}')
+	schema_exist=$(echo $connection | grep ${PASSWORDCOCKPIT_DATABASE_DATABASE} -c)
 	# connection ok and schema exist
 	if [ "$schema_exist" == "1" ]; then
 		echo -e "\e[32mConnection ok\e[0m"
 		echo -e "\e[32mSchema already exist\e[0m"
 		# Tables exists
-		number_of_tables=$(vendor/bin/doctrine dbal:run-sql "SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${PASSWORDCOCKPIT_DATABASE_DATABASE}'" | grep string | awk -F\" '{ print $2 }')
+		number_of_tables=$(vendor/bin/doctrine dbal:run-sql "SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${PASSWORDCOCKPIT_DATABASE_DATABASE}'" | tr -d -c 0-9)
 		# Create the tables and popolate it
 		vendor/bin/doctrine-migrations migrate
 		vendor/bin/doctrine orm:generate-proxies
 		echo -e "\e[32mDatabase created or updated\e[0m"
 		if [ "$number_of_tables" == "0" ]; then
-		    vendor/bin/doctrine dbal:import database/create-production-environment.sql
+        sql=$(cat database/create-production-environment.sql | sed '/^--/d')
+        vendor/bin/doctrine dbal:run-sql "$sql"
 	            echo -e "\e[32mProduction data installed\e[0m"
 		    if [ "${PASSWORDCOCKPIT_ADMIN_PASSWORD}" != "" ]; then
 			bcrypted_admin_password=$(/usr/local/bin/php -r "echo password_hash('${PASSWORDCOCKPIT_ADMIN_PASSWORD}', PASSWORD_BCRYPT);")
