@@ -157,4 +157,6 @@ VOLUME /var/www/html/data
 COPY entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["entrypoint.sh"]
 
+USER www-data:www-data
+
 CMD ["apache2-foreground"]
