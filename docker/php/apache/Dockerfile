@@ -20,6 +20,7 @@ RUN set -ex; \
     apt-get install -y --no-install-recommends libicu-dev; \
     docker-php-ext-install intl
 
+USER www-data:www-data
 WORKDIR /var/www/html
 
 # clone the source of the backend
