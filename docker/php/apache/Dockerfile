@@ -24,7 +24,7 @@ WORKDIR /var/www/html
 
 # clone the source of the backend
 RUN set -ex; \
-git clone -v git://github.com/passwordcockpit/backend.git /var/www/html; \
+git clone -v https://github.com/passwordcockpit/backend.git /var/www/html; \
 git checkout $PASSWORDCOCKPIT_BACKEND_TAG
 
 # remove git history
@@ -56,7 +56,7 @@ WORKDIR /usr/src/app
 
 # clone the source of the frontend
 RUN set -ex; \
-git clone -v git://github.com/passwordcockpit/frontend.git /usr/src/app; \
+git clone -v https://github.com/passwordcockpit/frontend.git /usr/src/app; \
 git checkout $PASSWORDCOCKPIT_FRONTEND_TAG
 
 # create local.js
