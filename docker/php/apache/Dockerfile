@@ -3,7 +3,7 @@
 ##############################################
 
 FROM --platform=linux/amd64 php:8.1-apache-bullseye as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=1.3.0-dev
+ARG PASSWORDCOCKPIT_BACKEND_TAG=1.3.1-dev
 RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends git
@@ -50,7 +50,7 @@ RUN composer swagger
 ##############################################
 
 FROM node:10-alpine as frontend_artifacts
-ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.1.1
+ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.2.0
 RUN apk add git
 WORKDIR /usr/src/app
 
