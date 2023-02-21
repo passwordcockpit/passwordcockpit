@@ -110,7 +110,8 @@ RUN set -ex; \
 	\
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*
-    
+
+# PHP configurations    
 # set recommended PHP.ini settings
 # set production configuration
 RUN mv /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
@@ -122,19 +123,35 @@ RUN { \
     echo 'opcache.revalidate_freq=2'; \
     echo 'opcache.fast_shutdown=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
-    
-WORKDIR /var/www/html
+# application configs
+RUN set -ex; \
+    \
+    echo 'session.cookie_httponly = 1' >> /usr/local/etc/php/conf.d/application.ini; \
+    echo 'session.cookie_secure = 1' >> /usr/local/etc/php/conf.d/application.ini; \
+    echo 'expose_php = Off' >> /usr/local/etc/php/conf.d/application.ini
+
+# apache configurations
 # set webroot
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 # set DirectoryIndex priority to index.html
 RUN sed -ri -e 's!DirectoryIndex index.php index.html!DirectoryIndex index.html index.php!g' /etc/apache2/conf-available/docker-php.conf
+# Hide Apache Version and Linux OS From HTTP Headers
+RUN sed -ri -e 's!ServerTokens OS!ServerTokens Prod!g' /etc/apache2/conf-enabled/security.conf
+RUN sed -ri -e 's!ServerSignature On!ServerSignature Off!g' /etc/apache2/conf-enabled/security.conf
+# adjust the Apache configuration to use an unprivileged port
+ENV PORT 8080
+RUN set -ex; \
+    sed -i "s/80/$PORT/g" /etc/apache2/sites-enabled/000-default.conf; \
+    sed -i "s/80/$PORT/g" /etc/apache2/ports.conf
+EXPOSE 8080
 
 # copy frontend_artifacts 
 COPY --from=backend_artifacts /var/www/html /var/www/html/
 COPY --from=frontend_artifacts /usr/src/app/dist /var/www/html/public/
 
+WORKDIR /var/www/html
 VOLUME /var/www/html/data
 
 COPY entrypoint.sh /usr/local/bin/
