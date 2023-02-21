@@ -71,7 +71,6 @@ RUN npm install -g ember-cli
 RUN npm install
 RUN ember build -p
 
-
 ##############################################
 # Build the HTML and PHP container
 ##############################################
