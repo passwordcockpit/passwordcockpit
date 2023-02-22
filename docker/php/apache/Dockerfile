@@ -3,7 +3,7 @@
 ##############################################
 
 FROM --platform=linux/amd64 php:8.1-apache-bullseye as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=1.3.1-dev
+ARG PASSWORDCOCKPIT_BACKEND_TAG=1.3.0-dev
 RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends git
