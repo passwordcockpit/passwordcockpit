@@ -72,7 +72,7 @@ do
 	if [ -z "${connection}" ]; then
 		echo -e "\e[31mRetrying connection...\e[0m"
 		try=$((try+1))
-		sleesp 3s
+		sleep 3s
 		continue
 	fi
 	schema_exist=$(echo $connection | grep array | awk -F"[()]" '{print $2}')
