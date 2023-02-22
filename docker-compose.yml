@@ -1,11 +1,11 @@
 version: "3.5"
 services:
     passwordcockpit:
-        image: passwordcockpit/passwordcockpit:1.2.2-php-7.3-apache
+        image: passwordcockpit/passwordcockpit:1.3.1-php-8.1-apache
         container_name: passwordcockpit
         ports:
             # Use with PASSWORDCOCKPIT_SSL: disable
-            #- "8080:80"
+            #- "8080:8080"
             # Use with PASSWORDCOCKPIT_SSL: enable
             - "4343:443"
         volumes:
@@ -39,7 +39,7 @@ services:
             PASSWORDCOCKPIT_LDAP_USER_ATTR_SURNAME: ''
             PASSWORDCOCKPIT_LDAP_USER_ATTR_MAIL: ''
             PASSWORDCOCKPIT_LDAP_USER_ATTR_PHONE: ''
-            PASSWORDCOCKPIT_UPLOAD_ACCEPTED_MIMETYPES: 'pdf'
+            PASSWORDCOCKPIT_UPLOAD_ACCEPTED_MIMETYPES: 'pdf,zip'
         depends_on:
             - mysql
     mysql:
