@@ -50,9 +50,9 @@ RUN composer swagger
 # Build frontend artifacts
 ##############################################
 
-FROM node:10-alpine as frontend_artifacts
+FROM node:18.3 as frontend_artifacts
 ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.2.0
-RUN apk add git
+RUN apt-get install git -y
 WORKDIR /usr/src/app
 
 # clone the source of the frontend
