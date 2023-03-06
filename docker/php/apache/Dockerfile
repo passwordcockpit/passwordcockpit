@@ -174,6 +174,7 @@ VOLUME /var/www/html/data
 RUN set -ex; \
 chown -R www-data:www-data /var/www/html/data; \ 
 chown -R www-data:www-data /var/www/html/upload; \
+chown  www-data:www-data /var/www/html/public; \
 chown -R www-data:www-data /var/www/html/public/index.html; \
 chown -R www-data:www-data /var/www/html/public/assets; \
 chown -R www-data:www-data /var/www/html/swagger
