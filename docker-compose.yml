@@ -12,7 +12,7 @@ services:
             - ./volumes/upload:/var/www/html/upload
             # Overwrite self-signed SSL certificate file
             #- ./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro
-            #- ./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro
+            #- ./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/certs/passwordcockpit.key:ro
             # User and group same as host when use APACHE_RUN_USER and APACHE_RUN_GROUP
             #- /etc/group:/etc/group:ro
             #- /etc/passwd:/etc/passwd:ro

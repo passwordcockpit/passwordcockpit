@@ -156,9 +156,10 @@ RUN set -ex; \
 EXPOSE 8080
 # SSL
 RUN set -ex; \
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=CH/ST=ZH/L=Zurich/O=Passwordcockpit" -keyout /etc/ssl/private/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt; \
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=CH/ST=ZH/L=Zurich/O=Passwordcockpit" -keyout /etc/ssl/certs/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt; \
+chmod 644 /etc/ssl/certs/passwordcockpit.key; \
 sed -ri -e 's!ssl-cert-snakeoil.pem!'passwordcockpit.crt'!g' /etc/apache2/sites-available/default-ssl.conf; \
-sed -ri -e 's!ssl-cert-snakeoil.key!'passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf; \
+sed -ri -e 's!/etc/ssl/private/ssl-cert-snakeoil.key!'/etc/ssl/certs/passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf; \
 mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
 
 # copy frontend_artifacts 
