@@ -1,33 +1,12 @@
 #!/bin/bash
 
 ##############################################
-# Configuration files
-##############################################
-echo -e "\e[32mStart creating configuration files\e[0m"
-
-mv config/autoload/db.local.php.dist config/autoload/db.local.php
-mv config/autoload/client.local.php.dist config/autoload/client.local.php
-mv config/autoload/doctrine.local.php.dist config/autoload/doctrine.local.php
-mv config/autoload/crypt.local.php.dist config/autoload/crypt.local.php
-mv config/autoload/authentication.local.php.dist config/autoload/authentication.local.php
-
-if [ "${PASSWORDCOCKPIT_AUTHENTICATION_TYPE}" == "ldap" ]; then
-    mv config/autoload/ldap.local.php.dist config/autoload/ldap.local.php
-fi
-
-mv config/constants.local.php.dist config/constants.local.php
-
-echo -e "\e[32mConfiguration files created\e[0m"
-
-
-##############################################
 # Update frontend files
 ##############################################
 echo -e "\e[32mStart updating frontend files\e[0m"
 sed -ri -e 's!PASSWORDCOCKPIT_BASEHOST!'${PASSWORDCOCKPIT_BASEHOST}'!g' public/index.html
 sed -ri -e 's!PASSWORDCOCKPIT_BASEHOST!'${PASSWORDCOCKPIT_BASEHOST}'!g' public/assets/*.*
 echo -e "\e[32mFrontend files updated\e[0m"
-
 
 ##############################################
 # Enable swagger
@@ -41,22 +20,6 @@ else
 	rm -rf swagger
 fi
 echo -e "\e[32mSwagger ok\e[0m"
-
-
-##############################################
-# SSL
-##############################################
-echo -e "\e[32mStart SSL part\e[0m"
-if [ "${PASSWORDCOCKPIT_SSL}" == "enable" ]; then
-	domain=$(echo ${PASSWORDCOCKPIT_BASEHOST}:8080 | awk -F[/:] '{print $4}')
-	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=CH/ST=ZH/L=Zurich/O=Passwordcockpit/CN=$domain" -keyout /etc/ssl/private/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt
-	sed -ri -e 's!ssl-cert-snakeoil.pem!'passwordcockpit.crt'!g' /etc/apache2/sites-available/default-ssl.conf
-	sed -ri -e 's!ssl-cert-snakeoil.key!'passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf
-	rm -rf /etc/apache2/sites-enabled/000-default.conf
-	mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
-fi
-echo -e "\e[32mSSL ok\e[0m"
-
 
 ##############################################
 # Database

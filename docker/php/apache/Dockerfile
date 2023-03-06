@@ -21,7 +21,6 @@ RUN set -ex; \
     docker-php-ext-install intl
 
 USER www-data:www-data
-WORKDIR /var/www/html
 
 # clone the source of the backend
 RUN set -ex; \
@@ -38,8 +37,17 @@ RUN rm -rf tests
 # install and build
 RUN composer install --prefer-dist --optimize-autoloader --no-dev
 
+# configuration files
+RUN set -ex; \
+mv config/autoload/db.local.php.dist config/autoload/db.local.php; \
+mv config/autoload/client.local.php.dist config/autoload/client.local.php; \
+mv config/autoload/doctrine.local.php.dist config/autoload/doctrine.local.php; \
+mv config/autoload/crypt.local.php.dist config/autoload/crypt.local.php; \
+mv config/autoload/authentication.local.php.dist config/autoload/authentication.local.php; \
+mv config/autoload/ldap.local.php.dist config/autoload/ldap.local.php; \
+mv config/constants.local.php.dist config/constants.local.php
+
 # generate swagger documentation
-# create constants.local.php
 RUN { \
 	echo "<?php"; \
     echo "define('SWAGGER_API_HOST', 'PASSWORDCOCKPIT_BASEHOST');"; \
@@ -146,13 +154,28 @@ RUN set -ex; \
     sed -i "s/80/$PORT/g" /etc/apache2/sites-enabled/000-default.conf; \
     sed -i "s/80/$PORT/g" /etc/apache2/ports.conf
 EXPOSE 8080
+# SSL
+RUN set -ex; \
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=CH/ST=ZH/L=Zurich/O=Passwordcockpit" -keyout /etc/ssl/private/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt; \
+sed -ri -e 's!ssl-cert-snakeoil.pem!'passwordcockpit.crt'!g' /etc/apache2/sites-available/default-ssl.conf; \
+sed -ri -e 's!ssl-cert-snakeoil.key!'passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf; \
+mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
 
 # copy frontend_artifacts 
 COPY --from=backend_artifacts /var/www/html /var/www/html/
+RUN chown root:root -R /var/www/html
 COPY --from=frontend_artifacts /usr/src/app/dist /var/www/html/public/
 
 WORKDIR /var/www/html
 VOLUME /var/www/html/data
+
+# Change permission
+RUN set -ex; \
+chown -R www-data:www-data /var/www/html/data; \ 
+chown -R www-data:www-data /var/www/html/upload; \
+chown -R www-data:www-data /var/www/html/public/index.html; \
+chown -R www-data:www-data /var/www/html/public/assets; \
+chown -R www-data:www-data /var/www/html/swagger
 
 COPY entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["entrypoint.sh"]
