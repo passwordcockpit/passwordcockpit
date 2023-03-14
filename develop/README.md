@@ -10,8 +10,9 @@ This README will explain the steps needed to setup and start the Passwordcockpit
 
 ## Installation
 
-First of all: copy the `docker-compose-develop.yml` file in your project folder, and rename it to `docker-compose.yml`.<br>
 The IP of the host machine is needed. Replace `[YOUR-IP]` in the `docker-compose.yml` file with your ip. There should be 3 replacements.
+
+Make sure the current working directory is `./develop`.
 
 Then simply run `docker-compose up`.
 

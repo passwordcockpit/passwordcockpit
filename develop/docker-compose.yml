@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./backend:/var/www/html
+      - ../backend:/var/www/html
     environment:
       PASSWORDCOCKPIT_DATABASE_USERNAME: passwordcockpit_db_usr
       PASSWORDCOCKPIT_DATABASE_PASSWORD: password
@@ -21,12 +21,12 @@ services:
     networks:
       - passwordcockpit_network
   passwordcockpit_frontend:
-    image: passwordcockpit/frontend:dev-1.1.0
+    image: passwordcockpit/frontend:dev-1.2.0
     container_name: passwordcockpit_frontend
     ports:
       - "4200:4200"
     volumes:
-      - ./frontend:/var/www/html
+      - ../frontend:/var/www/html
     environment:
       PASSWORDCOCKPIT_BASEHOST: http://[YOUR-IP]:8080
     networks:
@@ -35,7 +35,7 @@ services:
   passwordcockpit_database:
     image: mariadb:latest
     volumes:
-      - ./database:/var/lib/mysql
+      - ../database:/var/lib/mysql
     environment:
       - MYSQL_ROOT_HOST=%
       - MYSQL_ROOT_PASSWORD=password
