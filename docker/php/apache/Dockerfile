@@ -148,12 +148,6 @@ RUN sed -ri -e 's!DirectoryIndex index.php index.html!DirectoryIndex index.html 
 # Hide Apache Version and Linux OS From HTTP Headers
 RUN sed -ri -e 's!ServerTokens OS!ServerTokens Prod!g' /etc/apache2/conf-enabled/security.conf
 RUN sed -ri -e 's!ServerSignature On!ServerSignature Off!g' /etc/apache2/conf-enabled/security.conf
-# adjust the Apache configuration to use an unprivileged port
-ENV PORT 8080
-RUN set -ex; \
-    sed -i "s/80/$PORT/g" /etc/apache2/sites-enabled/000-default.conf; \
-    sed -i "s/80/$PORT/g" /etc/apache2/ports.conf
-EXPOSE 8080
 # SSL
 RUN set -ex; \
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=CH/ST=ZH/L=Zurich/O=Passwordcockpit" -keyout /etc/ssl/certs/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt; \
@@ -161,6 +155,15 @@ chmod 644 /etc/ssl/certs/passwordcockpit.key; \
 sed -ri -e 's!ssl-cert-snakeoil.pem!'passwordcockpit.crt'!g' /etc/apache2/sites-available/default-ssl.conf; \
 sed -ri -e 's!/etc/ssl/private/ssl-cert-snakeoil.key!'/etc/ssl/certs/passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf; \
 mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
+# adjust the Apache configuration to use an unprivileged port
+RUN set -ex; \
+    sed -i "s/80/8080/g" /etc/apache2/sites-enabled/000-default.conf; \
+    sed -i "s/80/8080/g" /etc/apache2/ports.conf
+EXPOSE 8080
+RUN set -ex; \
+    sed -i "s/443/4343/g" /etc/apache2/sites-enabled/default-ssl.conf; \
+    sed -i "s/443/4343/g" /etc/apache2/ports.conf
+EXPOSE 4343
 
 # copy frontend_artifacts 
 COPY --from=backend_artifacts /var/www/html /var/www/html/
