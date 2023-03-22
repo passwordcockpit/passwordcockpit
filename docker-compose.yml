@@ -1,13 +1,13 @@
 version: "3.5"
 services:
     passwordcockpit:
-        image: passwordcockpit/passwordcockpit:1.3.0-php-8.1-apache
+        image: passwordcockpit/passwordcockpit:1.3.0
         container_name: passwordcockpit
         ports:
             # Use with PASSWORDCOCKPIT_SSL: disable
             - "8080:8080"
             # Use with PASSWORDCOCKPIT_SSL: enable
-            #- "4343:443"
+            #- "4343:4343"
         volumes:
             - ./volumes/upload:/var/www/html/upload
             # Overwrite self-signed SSL certificate file
@@ -34,12 +34,20 @@ services:
             #PASSWORDCOCKPIT_ADMIN_PASSWORD: Password123!
             #APACHE_RUN_USER: 1000
             #APACHE_RUN_GROUP: 1000
-            PASSWORDCOCKPIT_LDAP_USER_ATTR_UNIQUE_IDENTIFIER: ''
-            PASSWORDCOCKPIT_LDAP_USER_ATTR_NAME: ''
-            PASSWORDCOCKPIT_LDAP_USER_ATTR_SURNAME: ''
-            PASSWORDCOCKPIT_LDAP_USER_ATTR_MAIL: ''
-            PASSWORDCOCKPIT_LDAP_USER_ATTR_PHONE: ''
+            #PASSWORDCOCKPIT_LDAP_USER_ATTR_UNIQUE_IDENTIFIER: ''
+            #PASSWORDCOCKPIT_LDAP_USER_ATTR_NAME: ''
+            #PASSWORDCOCKPIT_LDAP_USER_ATTR_SURNAME: ''
+            #PASSWORDCOCKPIT_LDAP_USER_ATTR_MAIL: ''
+            #PASSWORDCOCKPIT_LDAP_USER_ATTR_PHONE: ''
+            #PASSWORDCOCKPIT_LDAP_HOST: ''
+            #PASSWORDCOCKPIT_LDAP_PORT: 389
+            #PASSWORDCOCKPIT_LDAP_USERNAME: ''
+            #PASSWORDCOCKPIT_LDAP_PASSWORD: ''
+            #PASSWORDCOCKPIT_LDAP_BASEDN: ''
+            #PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT: ''
+            #PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN: 'true'
             PASSWORDCOCKPIT_UPLOAD_ACCEPTED_MIMETYPES: 'pdf,zip'
+            #PASSWORDCOCKPIT_DEBUG: true
         depends_on:
             - mysql
     mysql:
