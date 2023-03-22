@@ -1,6 +1,6 @@
 <p align="center" style="padding-top:30px"><img src="https://raw.githubusercontent.com/passwordcockpit/frontend/master/public/assets/images/logo.svg?sanitize=true" width="400" alt="Passwordcockpit logo"></p>
 
-<p align="center">Passwordcockpit is a simple, free, open source, self hosted, web based password manager for teams. It is made in PHP, Javascript, MySQL and it run on a docker service. It allows users with any kind of device to safely store, share and retrieve passwords, certificates, files and much more.</p>
+<p align="center">Passwordcockpit is a simple, free, open source, self hosted, web based password manager for teams. It is made in PHP, Javascript, MySQL or MariaDB and it run on a docker service. It allows users with any kind of device to safely store, share and retrieve passwords, certificates, files and much more.</p>
 
 <p align="center">
     <img alt="GitHub license" src="https://img.shields.io/github/license/passwordcockpit/passwordcockpit">
@@ -25,6 +25,7 @@
   - [Backend](#backend)
   - [Database](#database)
 - [Security](#security)
+- [Update to a newer version](#update-to-a-newer-version)
 - [Vulnerabilities](#vulnerabilities)
 - [Contribute](#contribute)
   - [Screenshots](#screenshots)
@@ -39,7 +40,6 @@ Passwordcockpit docker images are provided within [its Docker Hub organization](
 To start, just copy [`docker-compose.yml`](https://github.com/passwordcockpit/passwordcockpit/blob/master/docker-compose.yml) to a folder and setup the configuration as shown in the "Available docker configurations" chapter. Finally run `docker-compose up` from terminal.<br><br>
 When the service is up, navigate to `PASSWORDCOCKPIT_BASEHOST` (e.g. `https://passwordcockpit.com`) and login.<br><br>
 The default username is `admin`. The system generate the default password: `Admin123!`, this can be overridden by specifying the `PASSWORDCOCKPIT_ADMIN_PASSWORD` variable.
-
 
 # Permissions
 ## Global permissions
@@ -79,7 +79,7 @@ A password can be crypted with a personal PIN in order to hide it from users wit
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | - |
 | `/var/www/html/upload`                 | Contains passwords attached files. It is important to map for making data persistent. Access permissions of the host directory have to be the same as the user who runs docker.                                                                                                                                                                                                            | `./volumes/upload`                             |
 | `/etc/ssl/certs/passwordcockpit.crt`   | SSL certificate file for HTTPS, used to overwrite the self-signed auto generated file. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate**       | `./volumes/ssl_certificate/passwordcockpit.crt:/etc/ssl/certs/passwordcockpit.crt:ro` |
-| `/etc/ssl/private/passwordcockpit.key` | SSL certificate key file for HTTPS, used to overwrite the self-signed auto generated file. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate** | `./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/private/passwordcockpit.key:ro` |
+| `/etc/ssl/certs/passwordcockpit.key` | SSL certificate key file for HTTPS, used to overwrite the self-signed auto generated file. **IMPORTANT: specify read-only to avoid the overwrite of your certificate by the container certificate** | `./volumes/ssl_certificate/passwordcockpit.key:/etc/ssl/certs/passwordcockpit.key:ro` |
 
 | Environment variable                        | Description                                                                                                                                                                                                                                                                                                   | Example                              |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -92,7 +92,7 @@ A password can be crypted with a personal PIN in order to hide it from users wit
 | `PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY` | Key for encrypting JSON Web Tokens                                                                                                                                                                                                                                                                            | `zfYKN7Z8XW8McgKaSD2uSNmQQ9dPmgTz`   |
 | `PASSWORDCOCKPIT_BASEHOST`                  | Base host of the Passwordcockpit service                                                                                                                                                                                                                                                                      | `https://passwordcockpit.com` |
 | `PASSWORDCOCKPIT_SWAGGER`                   | Enable swagger documentation, possible values: `enable` or `disable`. If enabled, documentation can be seen here: `PASSWORDCOCKPIT_BASEHOST/swagger`                                                                                                                                                          | `enable`                             |
-| `PASSWORDCOCKPIT_SSL`                       | Enable SSL, possible values: `enable` or `disable`. If enabled the port 443 will be used, the system will generate a self-signed certificate that can be replaced with the one specified in the volumes configuration. If disabled the port 80 will be used. The two ports cannot be opened at the same time. | `enable`                             |
+| `PASSWORDCOCKPIT_SSL`                       | Enable SSL, possible values: `enable` or `disable`. If enabled the port **4343** will be used, the system will generate a self-signed certificate that can be replaced with the one specified in the volumes configuration. If disabled the port **8080** will be used. **Standard ports 80 and 443 are no longer used because the container runs with a non-root user.** | `enable`                             |
 | `PASSWORDCOCKPIT_SSL_RELAXED_IP`                       | When `PASSWORDCOCKPIT_SSL` is disabled, it can be set hosts where secure rule is relaxed. | `10.0.0.1,10.0.0.2`                             |
 | `PASSWORDCOCKPIT_ADMIN_PASSWORD`            | Admin password to log into passwordcockpit                                                                                                                                                                                                                                                                    | `Password123!`                           |
 | `PASSWORDCOCKPIT_AUTHENTICATION_TYPE`       | Type of the authentication, possible values: `ldap` or `password`                                                                                                                                                                                                                                             | `password`                           |
@@ -123,9 +123,7 @@ Password cockpit is translated into:
 - Français
 - Deutsch
 
-
 # Architecture and technologies
-
 <p align="center"><img src="https://raw.githubusercontent.com/passwordcockpit/passwordcockpit/master/assets/architecture.svg?sanitize=true" width="500" alt="RESTful architecture diagram"></p>
 The application itself follows the RESTful architecture.<br>
 To ease deployment into production, frontend and backend have been built and merged in a single docker image.
@@ -146,7 +144,7 @@ All listed encryptions are customizable with a custom key, adding cryptographic 
 All API are documented with [`Swagger`](https://swagger.io/).
 
 ## Database
-Database uses [`mysql`](https://www.mysql.com/).
+Database uses [`mysql`](https://www.mysql.com) or [`mariaDB`](https://mariadb.org)
 
 # Security
 To ensure the security to your Passwordcockpit instance:
@@ -154,7 +152,12 @@ To ensure the security to your Passwordcockpit instance:
 - Set your `PASSWORDCOCKPIT_BLOCK_CIPHER_KEY` and `PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY`.
 - Set your `PASSWORDCOCKPIT_ADMIN_PASSWORD`.
 - Disable Swagger.
+<br>
+The container runs as www-data user (non-root).
 
+# Update to a newer version
+Updating is done by pulling the new image, throwing away the old container and starting the new one.
+Before performing an update, it is best to back up the database and persistent files. This will ensure that you have a copy of your data in case something goes wrong during the update process. 
 
 # Vulnerabilities
 If you find any vulnerability within the project, you are welcome to drop us a private message to: security@passwordcockpit.com. Thanks!

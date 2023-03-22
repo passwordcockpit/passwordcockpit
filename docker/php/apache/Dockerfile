@@ -3,7 +3,7 @@
 ##############################################
 
 FROM --platform=linux/amd64 php:8.1-apache-bullseye as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=1.3.0-dev
+ARG PASSWORDCOCKPIT_BACKEND_TAG=1.3.0
 RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends git
@@ -20,11 +20,11 @@ RUN set -ex; \
     apt-get install -y --no-install-recommends libicu-dev; \
     docker-php-ext-install intl
 
-WORKDIR /var/www/html
+USER www-data:www-data
 
 # clone the source of the backend
 RUN set -ex; \
-git clone -v git://github.com/passwordcockpit/backend.git /var/www/html; \
+git clone -v https://github.com/passwordcockpit/backend.git /var/www/html; \
 git checkout $PASSWORDCOCKPIT_BACKEND_TAG
 
 # remove git history
@@ -37,8 +37,17 @@ RUN rm -rf tests
 # install and build
 RUN composer install --prefer-dist --optimize-autoloader --no-dev
 
+# configuration files
+RUN set -ex; \
+mv config/autoload/db.local.php.dist config/autoload/db.local.php; \
+mv config/autoload/client.local.php.dist config/autoload/client.local.php; \
+mv config/autoload/doctrine.local.php.dist config/autoload/doctrine.local.php; \
+mv config/autoload/crypt.local.php.dist config/autoload/crypt.local.php; \
+mv config/autoload/authentication.local.php.dist config/autoload/authentication.local.php; \
+mv config/autoload/ldap.local.php.dist config/autoload/ldap.local.php; \
+mv config/constants.local.php.dist config/constants.local.php
+
 # generate swagger documentation
-# create constants.local.php
 RUN { \
 	echo "<?php"; \
     echo "define('SWAGGER_API_HOST', 'PASSWORDCOCKPIT_BASEHOST');"; \
@@ -49,14 +58,14 @@ RUN composer swagger
 # Build frontend artifacts
 ##############################################
 
-FROM node:10-alpine as frontend_artifacts
-ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.1.1
-RUN apk add git
+FROM node:18.3 as frontend_artifacts
+ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.2.0
+RUN apt-get install git -y
 WORKDIR /usr/src/app
 
 # clone the source of the frontend
 RUN set -ex; \
-git clone -v git://github.com/passwordcockpit/frontend.git /usr/src/app; \
+git clone -v https://github.com/passwordcockpit/frontend.git /usr/src/app; \
 git checkout $PASSWORDCOCKPIT_FRONTEND_TAG
 
 # create local.js
@@ -70,7 +79,6 @@ RUN { \
 RUN npm install -g ember-cli
 RUN npm install
 RUN ember build -p
-
 
 ##############################################
 # Build the HTML and PHP container
@@ -110,7 +118,8 @@ RUN set -ex; \
 	\
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*
-    
+
+# PHP configurations    
 # set recommended PHP.ini settings
 # set production configuration
 RUN mv /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
@@ -122,22 +131,60 @@ RUN { \
     echo 'opcache.revalidate_freq=2'; \
     echo 'opcache.fast_shutdown=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
-    
-WORKDIR /var/www/html
+# application configs
+RUN set -ex; \
+    \
+    echo 'session.cookie_httponly = 1' >> /usr/local/etc/php/conf.d/application.ini; \
+    echo 'session.cookie_secure = 1' >> /usr/local/etc/php/conf.d/application.ini; \
+    echo 'expose_php = Off' >> /usr/local/etc/php/conf.d/application.ini
+
+# apache configurations
 # set webroot
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 # set DirectoryIndex priority to index.html
 RUN sed -ri -e 's!DirectoryIndex index.php index.html!DirectoryIndex index.html index.php!g' /etc/apache2/conf-available/docker-php.conf
+# Hide Apache Version and Linux OS From HTTP Headers
+RUN sed -ri -e 's!ServerTokens OS!ServerTokens Prod!g' /etc/apache2/conf-enabled/security.conf
+RUN sed -ri -e 's!ServerSignature On!ServerSignature Off!g' /etc/apache2/conf-enabled/security.conf
+# SSL
+RUN set -ex; \
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=CH/ST=ZH/L=Zurich/O=Passwordcockpit" -keyout /etc/ssl/certs/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt; \
+chmod 644 /etc/ssl/certs/passwordcockpit.key; \
+sed -ri -e 's!ssl-cert-snakeoil.pem!'passwordcockpit.crt'!g' /etc/apache2/sites-available/default-ssl.conf; \
+sed -ri -e 's!/etc/ssl/private/ssl-cert-snakeoil.key!'/etc/ssl/certs/passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf; \
+mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
+# adjust the Apache configuration to use an unprivileged port
+RUN set -ex; \
+    sed -i "s/80/8080/g" /etc/apache2/sites-enabled/000-default.conf; \
+    sed -i "s/80/8080/g" /etc/apache2/ports.conf
+EXPOSE 8080
+RUN set -ex; \
+    sed -i "s/443/4343/g" /etc/apache2/sites-enabled/default-ssl.conf; \
+    sed -i "s/443/4343/g" /etc/apache2/ports.conf
+EXPOSE 4343
 
 # copy frontend_artifacts 
 COPY --from=backend_artifacts /var/www/html /var/www/html/
+RUN chown root:root -R /var/www/html
 COPY --from=frontend_artifacts /usr/src/app/dist /var/www/html/public/
 
+WORKDIR /var/www/html
 VOLUME /var/www/html/data
+
+# Change permission
+RUN set -ex; \
+chown -R www-data:www-data /var/www/html/data; \ 
+chown -R www-data:www-data /var/www/html/upload; \
+chown  www-data:www-data /var/www/html/public; \
+chown -R www-data:www-data /var/www/html/public/index.html; \
+chown -R www-data:www-data /var/www/html/public/assets; \
+chown -R www-data:www-data /var/www/html/swagger
 
 COPY entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["entrypoint.sh"]
+
+USER www-data:www-data
 
 CMD ["apache2-foreground"]
