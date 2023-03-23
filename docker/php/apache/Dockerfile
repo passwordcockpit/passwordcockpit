@@ -59,7 +59,7 @@ RUN composer swagger
 ##############################################
 
 FROM node:18.3 as frontend_artifacts
-ARG PASSWORDCOCKPIT_FRONTEND_TAG=3ebac333208325b1339641af237ae4c6a892902c
+ARG PASSWORDCOCKPIT_FRONTEND_TAG=75bc487a5b93bc6137752e71912ef1123cfdec2e
 RUN apt-get install git -y
 WORKDIR /usr/src/app
 
@@ -177,12 +177,12 @@ VOLUME /var/www/html/data
 
 # Change permission
 RUN set -ex; \
-chown -R www-data:www-data /var/www/html/data; \ 
-chown -R www-data:www-data /var/www/html/upload; \
-chown  www-data:www-data /var/www/html/public; \
-chown -R www-data:www-data /var/www/html/public/index.html; \
-chown -R www-data:www-data /var/www/html/public/assets; \
-chown -R www-data:www-data /var/www/html/swagger
+chmod -R 777 /var/www/html/data; \ 
+chmod -R 777 /var/www/html/upload; \
+chmod 777 /var/www/html/public; \
+chmod 777 /var/www/html/public/index.html; \
+chmod -R 777 /var/www/html/public/assets; \
+chmod -R 777 /var/www/html/swagger
 
 COPY entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["entrypoint.sh"]
