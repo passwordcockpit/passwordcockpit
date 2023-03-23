@@ -152,7 +152,7 @@ To ensure the security to your Passwordcockpit instance:
 - Set your `PASSWORDCOCKPIT_BLOCK_CIPHER_KEY` and `PASSWORDCOCKPIT_AUTHENTICATION_SECRET_KEY`.
 - Set your `PASSWORDCOCKPIT_ADMIN_PASSWORD`.
 - Disable Swagger.
-<br>
+<br><br>
 The container runs as www-data user (non-root).
 
 # Update to a newer version
