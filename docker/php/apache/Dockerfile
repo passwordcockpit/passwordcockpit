@@ -3,7 +3,7 @@
 ##############################################
 
 FROM --platform=linux/amd64 php:8.1-apache-bullseye as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=1.3.0
+ARG PASSWORDCOCKPIT_BACKEND_TAG=a85d73deeeede99e664d785764c1922ef30f8b72
 RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends git
@@ -59,7 +59,7 @@ RUN composer swagger
 ##############################################
 
 FROM node:18.3 as frontend_artifacts
-ARG PASSWORDCOCKPIT_FRONTEND_TAG=1.2.0
+ARG PASSWORDCOCKPIT_FRONTEND_TAG=3ebac333208325b1339641af237ae4c6a892902c
 RUN apt-get install git -y
 WORKDIR /usr/src/app
 
@@ -164,6 +164,8 @@ RUN set -ex; \
     sed -i "s/443/4343/g" /etc/apache2/sites-enabled/default-ssl.conf; \
     sed -i "s/443/4343/g" /etc/apache2/ports.conf
 EXPOSE 4343
+# Operation not supported: AH00023: Couldn't create the mpm-accept mutex passwordcockpit | (95)Operation not supported: could not create accept mutex on Apple m1
+RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf
 
 # copy frontend_artifacts 
 COPY --from=backend_artifacts /var/www/html /var/www/html/
