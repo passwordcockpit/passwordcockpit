@@ -109,7 +109,9 @@ A password can be crypted with a personal PIN in order to hide it from users wit
 | `PASSWORDCOCKPIT_LDAP_PASSWORD`                    | Password for LDAP                                          | `password`                                                       |
 | `PASSWORDCOCKPIT_LDAP_BASEDN`                      | Base DN                                                    | `cn=users,dc=passwordcockpit,dc=com`                                      |
 | `PASSWORDCOCKPIT_LDAP_ACCOUNTFILTERFORMAT`         | Filter to retrieve accounts, it match the `username`                              | `(&(memberOf=cn=group_name,cn=groups,dc=passwordcockpit,dc=com)(uid=%s))` |
-| `PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN`              | Bind if DN is required, possible values: `'true'` or `'false'` | `'true'`                                                           |
+| `PASSWORDCOCKPIT_LDAP_BINDREQUIRESDN`              | Bind if DN is required, possible values: `'true'` or `'false'`, default value: `'false'` | `'true'`                                                           |
+| `PASSWORDCOCKPIT_LDAP_USESTARTTLS`              | Whether or not the LDAP client should use TLS (aka SSLv2) encrypted transport, possible values: `'true'` or `'false'`, default value: `'false'`  | `'false'`                                                           |
+| `PASSWORDCOCKPIT_LDAP_USESSL`              | Whether or not the LDAP client should use SSL encrypted transport, possible values: `'true'` or `'false'`, default value: `'false'` | `'false'`                                                           |
 | `PASSWORDCOCKPIT_LDAP_USER_ATTR_UNIQUE_IDENTIFIER`              | Configure user identifier attribute, default value: `'uid'` |`'uid'`                                                           |
 | `PASSWORDCOCKPIT_LDAP_USER_ATTR_NAME`              | Configure name of user attribute, default value: `'givenname'` |`'givenname'`                                                           |
 | `PASSWORDCOCKPIT_LDAP_USER_ATTR_SURNAME`              | Configure surname of user attribute, default value: `'sn'` |`'sn'`                                                           |
