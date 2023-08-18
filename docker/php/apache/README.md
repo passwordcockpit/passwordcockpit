@@ -1,7 +1,15 @@
 # Passwordcockpit image
 
-## Build the image
-### With predefined tags in the Dockerfile
+## Automantic build image and push to Dockerhub 
+Build and push of the image is done via the actio `.github/workflows/docker-image.yml`that is triggered upon creation of a tag.
+
+- Set the hash of backend (PASSWORDCOCKPIT_BACKEND_TAG) and frontend (PASSWORDCOCKPIT_FRONTEND_TAG) in `docker/php/apache/Dockerfile`
+- Commit and push the modification
+- Tag the version
+
+
+## Manual build image 
+## With predefined tags in the Dockerfile
 docker build -t passwordcockpit/passwordcockpit:1.3.3 .
 
 ### With custom hashs

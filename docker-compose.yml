@@ -1,7 +1,7 @@
 version: "3.5"
 services:
     passwordcockpit:
-        image: passwordcockpit/passwordcockpit:1.3.3
+        image: passwordcockpit/passwordcockpit:1.3.4
         container_name: passwordcockpit
         ports:
             # Use with PASSWORDCOCKPIT_SSL: disable
