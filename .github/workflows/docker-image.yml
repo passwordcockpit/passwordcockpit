@@ -28,4 +28,4 @@ jobs:
           context: docker/php/apache
           file: docker/php/apache/Dockerfile
           push: true
-          tags: ${{ github.ref_name }}
+          tags: passwordcockpit/passwordcockpit:${{ github.ref_name }}
