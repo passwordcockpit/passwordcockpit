@@ -102,8 +102,6 @@ RUN set -ex; \
     docker-php-ext-install pdo_mysql; \
     # mod_rewrite extension
     a2enmod rewrite; \
-    # mod_headers extension
-    a2enmod headers; \
     # ssl extension
     a2enmod ssl; \
     \
@@ -147,13 +145,6 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 # set DirectoryIndex priority to index.html
 RUN sed -ri -e 's!DirectoryIndex index.php index.html!DirectoryIndex index.html index.php!g' /etc/apache2/conf-available/docker-php.conf
-# Set Security Headers (use https://csp-evaluator.withgoogle.com/)
-RUN { \
-    echo '<Directory ${APACHE_DOCUMENT_ROOT}>'; \
-    echo 'Header set Strict-Transport-Security "max-age=10886400; includeSubDomains"'; \
-    echo 'Header set Content-Security-Policy "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"'; \
-    echo '</Directory>'; \
-    } > /etc/apache2/conf-enabled/mod-rewrite.conf
 # Hide Apache Version and Linux OS From HTTP Headers
 RUN sed -ri -e 's!ServerTokens OS!ServerTokens Prod!g' /etc/apache2/conf-enabled/security.conf
 RUN sed -ri -e 's!ServerSignature On!ServerSignature Off!g' /etc/apache2/conf-enabled/security.conf
