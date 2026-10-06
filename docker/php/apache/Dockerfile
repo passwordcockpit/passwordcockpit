@@ -2,30 +2,26 @@
 # Build backend artifacts
 ##############################################
 
-FROM --platform=linux/amd64 php:8.2-apache-bullseye as backend_artifacts
+FROM --platform=linux/amd64 php:8.5-apache-bookworm as backend_artifacts
 ARG PASSWORDCOCKPIT_BACKEND_TAG=ce70618b76b6521a00458f0fed73bca148180974
-RUN set -ex; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends git
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN set -ex; \
-    apt-get update; \
-    # zip
-    apt-get install -y libzip-dev; \
-    docker-php-ext-install zip; \
-    # ldap
-    apt-get install -y libldap2-dev; \
-    docker-php-ext-install ldap; \
-    # intl
-    apt-get install -y --no-install-recommends libicu-dev; \
-    docker-php-ext-install intl
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    apt-get update && apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/* && \
+    install-php-extensions \
+    zip \
+    ldap \
+    intl \
+    @composer
 
 USER www-data:www-data
 
 # clone the source of the backend
 RUN set -ex; \
-git clone -v https://github.com/passwordcockpit/backend.git /var/www/html; \
-git checkout $PASSWORDCOCKPIT_BACKEND_TAG
+    git clone -v https://github.com/passwordcockpit/backend.git /var/www/html; \
+    git checkout $PASSWORDCOCKPIT_BACKEND_TAG
 
 # remove git history
 RUN rm -rf .git
@@ -39,18 +35,18 @@ RUN composer install --prefer-dist --optimize-autoloader --no-dev
 
 # configuration files
 RUN set -ex; \
-mv config/autoload/client.local.php.dist config/autoload/client.local.php; \
-mv config/autoload/doctrine.local.php.dist config/autoload/doctrine.local.php; \
-mv config/autoload/crypt.local.php.dist config/autoload/crypt.local.php; \
-mv config/autoload/authentication.local.php.dist config/autoload/authentication.local.php; \
-mv config/autoload/ldap.local.php.dist config/autoload/ldap.local.php; \
-mv config/constants.local.php.dist config/constants.local.php
+    mv config/autoload/client.local.php.dist config/autoload/client.local.php; \
+    mv config/autoload/doctrine.local.php.dist config/autoload/doctrine.local.php; \
+    mv config/autoload/crypt.local.php.dist config/autoload/crypt.local.php; \
+    mv config/autoload/authentication.local.php.dist config/autoload/authentication.local.php; \
+    mv config/autoload/ldap.local.php.dist config/autoload/ldap.local.php; \
+    mv config/constants.local.php.dist config/constants.local.php
 
 # generate swagger documentation
 RUN { \
-	echo "<?php"; \
+    echo "<?php"; \
     echo "define('SWAGGER_API_HOST', 'PASSWORDCOCKPIT_BASEHOST');"; \
-} > config/constants.local.php
+    } > config/constants.local.php
 RUN composer swagger
 
 ##############################################
@@ -64,15 +60,15 @@ WORKDIR /usr/src/app
 
 # clone the source of the frontend
 RUN set -ex; \
-git clone -v https://github.com/passwordcockpit/frontend.git /usr/src/app; \
-git checkout $PASSWORDCOCKPIT_FRONTEND_TAG
+    git clone -v https://github.com/passwordcockpit/frontend.git /usr/src/app; \
+    git checkout $PASSWORDCOCKPIT_FRONTEND_TAG
 
 # create local.js
 RUN { \
-	echo "module.exports = {"; \
+    echo "module.exports = {"; \
     echo "    baseHost: 'PASSWORDCOCKPIT_BASEHOST'"; \
     echo "};"; \
-} > config/local.js
+    } > config/local.js
 
 # install and build
 RUN npm install -g ember-cli
@@ -83,42 +79,17 @@ RUN ember build -p
 # Build the HTML and PHP container
 ##############################################
 
-FROM --platform=linux/amd64 php:8.2-apache-bullseye
-RUN set -ex; \
-	\
-	savedAptMark="$(apt-mark showmanual)"; \
-	\
-    apt-get update; \
-    # ldap
-    apt-get install -y --no-install-recommends libldap2-dev; \
-    docker-php-ext-install ldap; \
-    # intl
-    apt-get install -y --no-install-recommends libicu-dev; \
-    docker-php-ext-install intl; \
-    # opcache
-    docker-php-ext-install opcache; \
-    # pdo_mysql
-    docker-php-ext-install pdo_mysql; \
-    # mod_rewrite extension
-    a2enmod rewrite; \
-    # ssl extension
-    a2enmod ssl; \
-    # headers extension
-    a2enmod headers; \
-    \
-	# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark; \
-	ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
-		| awk '/=>/ { print $3 }' \
-		| sort -u \
-		| xargs -r dpkg-query -S \
-		| cut -d: -f1 \
-		| sort -u \
-		| xargs -rt apt-mark manual; \
-	\
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	rm -rf /var/lib/apt/lists/*
+FROM --platform=linux/amd64 php:8.5-apache-bookworm
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    a2enmod rewrite ssl headers && \
+    install-php-extensions \
+    ldap \
+    intl \
+    opcache \
+    pdo_mysql
 
 # PHP configurations    
 # set recommended PHP.ini settings
@@ -162,11 +133,11 @@ RUN sed -ri -e 's!ServerTokens OS!ServerTokens Prod!g' /etc/apache2/conf-enabled
 RUN sed -ri -e 's!ServerSignature On!ServerSignature Off!g' /etc/apache2/conf-enabled/security.conf
 # SSL
 RUN set -ex; \
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=CH/ST=ZH/L=Zurich/O=Passwordcockpit" -keyout /etc/ssl/certs/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt; \
-chmod 644 /etc/ssl/certs/passwordcockpit.key; \
-sed -ri -e 's!ssl-cert-snakeoil.pem!'passwordcockpit.crt'!g' /etc/apache2/sites-available/default-ssl.conf; \
-sed -ri -e 's!/etc/ssl/private/ssl-cert-snakeoil.key!'/etc/ssl/certs/passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf; \
-mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=CH/ST=ZH/L=Zurich/O=Passwordcockpit" -keyout /etc/ssl/certs/passwordcockpit.key -out /etc/ssl/certs/passwordcockpit.crt; \
+    chmod 644 /etc/ssl/certs/passwordcockpit.key; \
+    sed -ri -e 's!ssl-cert-snakeoil.pem!'passwordcockpit.crt'!g' /etc/apache2/sites-available/default-ssl.conf; \
+    sed -ri -e 's!/etc/ssl/private/ssl-cert-snakeoil.key!'/etc/ssl/certs/passwordcockpit.key'!g' /etc/apache2/sites-available/default-ssl.conf; \
+    mv /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
 # adjust the Apache configuration to use an unprivileged port
 RUN set -ex; \
     sed -i "s/80/8080/g" /etc/apache2/sites-enabled/000-default.conf; \
@@ -189,13 +160,13 @@ VOLUME /var/www/html/data
 
 # Change permission
 RUN set -ex; \
-chmod -R 777 /var/www/html/data; \ 
-chmod -R 777 /var/www/html/upload; \
-chmod 777 /var/www/html/tmp; \
-chmod 777 /var/www/html/public; \
-chmod 777 /var/www/html/public/index.html; \
-chmod -R 777 /var/www/html/public/assets; \
-chmod -R 777 /var/www/html/swagger
+    chmod -R 777 /var/www/html/data; \ 
+    chmod -R 777 /var/www/html/upload; \
+    chmod 777 /var/www/html/tmp; \
+    chmod 777 /var/www/html/public; \
+    chmod 777 /var/www/html/public/index.html; \
+    chmod -R 777 /var/www/html/public/assets; \
+    chmod -R 777 /var/www/html/swagger
 
 COPY entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["entrypoint.sh"]
