@@ -3,7 +3,7 @@
 ##############################################
 
 FROM --platform=linux/amd64 php:8.5-apache-trixie as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=ce70618b76b6521a00458f0fed73bca148180974
+ARG PASSWORDCOCKPIT_BACKEND_TAG=e88a93632ab8ee182fa82a328ea65f610e375738
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
@@ -54,7 +54,7 @@ RUN composer swagger
 ##############################################
 
 FROM node:24.14 as frontend_artifacts
-ARG PASSWORDCOCKPIT_FRONTEND_TAG=5e286e3dcca648ceaaf242cc8501ff24a8e20df6
+ARG PASSWORDCOCKPIT_FRONTEND_TAG=5e2afbf8226148fe167c5960d07267e2181b4cce
 RUN apt-get install git -y
 WORKDIR /usr/src/app
 
