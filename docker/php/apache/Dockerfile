@@ -2,7 +2,7 @@
 # Build backend artifacts
 ##############################################
 
-FROM --platform=linux/amd64 php:8.5-apache-bookworm as backend_artifacts
+FROM --platform=linux/amd64 php:8.5-apache-trixie as backend_artifacts
 ARG PASSWORDCOCKPIT_BACKEND_TAG=ce70618b76b6521a00458f0fed73bca148180974
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
@@ -79,7 +79,7 @@ RUN ember build -p
 # Build the HTML and PHP container
 ##############################################
 
-FROM --platform=linux/amd64 php:8.5-apache-bookworm
+FROM --platform=linux/amd64 php:8.5-apache-trixie
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
