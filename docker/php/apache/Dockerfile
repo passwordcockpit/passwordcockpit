@@ -2,7 +2,7 @@
 # Build backend artifacts
 ##############################################
 
-FROM --platform=linux/amd64 php:8.2-apache-bullseye as backend_artifacts
+FROM --platform=linux/amd64 php:8.2-apache-bookworm as backend_artifacts
 ARG PASSWORDCOCKPIT_BACKEND_TAG=ce70618b76b6521a00458f0fed73bca148180974
 RUN set -ex; \
     apt-get update; \
@@ -83,7 +83,7 @@ RUN ember build -p
 # Build the HTML and PHP container
 ##############################################
 
-FROM --platform=linux/amd64 php:8.2-apache-bullseye
+FROM --platform=linux/amd64 php:8.2-apache-bookworm
 RUN set -ex; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
