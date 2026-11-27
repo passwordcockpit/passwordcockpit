@@ -18,7 +18,8 @@ services:
       XDEBUG_CONFIG: start_with_request=yes idekey=VSCODE client_host=host.docker.internal output_dir=/var/www/html/data
       XDEBUG_MODE: debug
     depends_on:
-      - passwordcockpit_database
+        passwordcockpit_database:
+          condition: service_healthy
     networks:
       - passwordcockpit_network
   passwordcockpit_frontend:
@@ -43,6 +44,12 @@ services:
       - MYSQL_USER=passwordcockpit_db_usr
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=passwordcockpit
+    healthcheck:
+        test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+        start_period: 30s
     command: --character-set-server=utf8 --collation-server=utf8_unicode_ci
     ports:
       - "3306:3306"
