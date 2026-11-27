@@ -3,7 +3,7 @@
 ##############################################
 
 FROM --platform=linux/amd64 php:8.5-apache-trixie as backend_artifacts
-ARG PASSWORDCOCKPIT_BACKEND_TAG=598638b89f2f7fcb2a180d5aa61f054478c4c41f
+ARG PASSWORDCOCKPIT_BACKEND_TAG=2dc6a828e68c351162f35f460e81a78ab8fe8417
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
