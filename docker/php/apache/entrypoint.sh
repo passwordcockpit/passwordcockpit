@@ -44,17 +44,16 @@ do
 		# Tables exists
 		number_of_tables=$(bin/doctrine dbal:run-sql "SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${PASSWORDCOCKPIT_DATABASE_DATABASE}'" | tr -d -c 0-9)
 		# Create the tables and popolate it
-		bin/doctrine-migrations migrate
-		bin/doctrine orm:generate-proxies
+		vendor/bin/doctrine-migrations migrate
 		echo -e "\e[32mDatabase created or updated\e[0m"
 		if [ "$number_of_tables" == "0" ]; then
-        sql=$(cat database/create-production-environment.sql | sed '/^--/d')
-        bin/doctrine dbal:run-sql "$sql"
-	            echo -e "\e[32mProduction data installed\e[0m"
+        	sql=$(cat database/create-production-environment.sql | sed '/^--/d')
+        	bin/doctrine dbal:run-sql "$sql"
+	        echo -e "\e[32mProduction data installed\e[0m"
 		    if [ "${PASSWORDCOCKPIT_ADMIN_PASSWORD}" != "" ]; then
-			bcrypted_admin_password=$(/usr/local/bin/php -r "echo password_hash('${PASSWORDCOCKPIT_ADMIN_PASSWORD}', PASSWORD_BCRYPT);")
-			bin/doctrine dbal:run-sql "UPDATE user SET password = '$bcrypted_admin_password' WHERE user_id = 1"
-			echo -e "\e[32mAdmin password modified\e[0m"
+				bcrypted_admin_password=$(/usr/local/bin/php -r "echo password_hash('${PASSWORDCOCKPIT_ADMIN_PASSWORD}', PASSWORD_BCRYPT);")
+				bin/doctrine dbal:run-sql "UPDATE user SET password = '$bcrypted_admin_password' WHERE user_id = 1"
+				echo -e "\e[32mAdmin password modified\e[0m"
 		    fi
 		fi
 		break
